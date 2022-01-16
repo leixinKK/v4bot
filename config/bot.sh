@@ -46,14 +46,19 @@ bot() {
   if [ -d ${dir_diybot} ]; then
     rm -rf $dir_diybot
   fi
+  git_clone ${url} ${dir_diybot} "main"
+  if [ -f $dir_jbot/diy/user.py ]; then
+    mv -f $dir_jbot/diy/user.py $dir_diybot/jbot/diy/
+  else
+    rm -f $dir_diybot/jbot/diy/user.py
+  fi
   if [ -d ${dir_jbot} ]; then
     backup
   fi
-  git_clone ${url} ${dir_diybot} "main"
+
   if [ -f $dir_jbot/diy/diy.py ]; then
     rm -f $dir_diybot/jbot/diy/diy.py
   fi
-  rm -f $dir_diybot/jbot/diy/user.py
   cp -rf $dir_diybot/jbot/* $dir_jbot
   echo -e "bot文件下载成功...\n"
   if [[ ! -f $file_bot ]]; then
