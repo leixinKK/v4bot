@@ -13,7 +13,7 @@ async def myupbot(event):
     try:
         msg = await jdbot.send_message(chat_id, "【diy正式版】\n\n准备更新程序")
         SENDER = event.sender_id
-        furl = "https://raw.githubusercontent.com/Annyoo2021/JD_Diy/master/config/diybot.sh"
+        furl = "https://raw.githubusercontent.com/Annyoo2021/mybot/main/config/diybot.sh"
         if '下载代理' in mybot.keys() and str(mybot['下载代理']).lower() != 'false' and 'github' in furl:
             furl = f'{str(mybot["下载代理"])}/{furl}'
         resp = requests.get(furl).text
