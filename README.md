@@ -16,7 +16,7 @@ cd /jd/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.github
 ```
 
 ### V4BOT用户部署[user.py](https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py)
-1. 进入容器，输入如下命令：
+1. 进入容器，输入如下命令 (jd自行改为自己的容器名)：
 ```
 docker exec -it jd bash
 ```
