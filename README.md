@@ -10,9 +10,14 @@ cd config && rm -rf bot.sh && wget https://ghproxy.com/https://raw.githubusercon
 ```text
 /cmd cd config && rm -rf bot.sh && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/config/bot.sh && bash bot.sh && cd /jd/
 ```
+#### 4、单纯下载或更新user.py，在容器中使用命令
+```
+cd /jd/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd /jd/
+```
+
 ### V4BOT用户部署[user.py](https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py)
 1. 进入容器，输入如下命令：`docker exec -it jd bash`
-2. 把 [user.py](https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py) 下载到 `/jbot/diy` 目录下，输入如下命令：
+2. 首次部署user，输入如下命令：
 ```
 cd /jd/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd /jd/ && pm2 stop jbot && rm -rf user.session && python3 -m jbot
 ```
