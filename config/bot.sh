@@ -80,7 +80,7 @@ packages() {
   cd $dir_jbot || exit
   /usr/bin/python3 -m pip install --upgrade pip
   pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/
-  pip3  --no-cache-dir --default-timeout=100 install -r requirements.txt
+  pip3 --default-timeout=100 install -r requirements.txt --no-cache-dir
   echo -e "python3依赖安装成功...\n"
   cd $root || exit
 }
