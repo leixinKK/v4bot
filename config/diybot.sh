@@ -53,6 +53,8 @@ bot() {
   if [ -f $dir_jbot/diy/diy.py ]; then
     rm -f $dir_diybot/jbot/diy/diy.py
   fi
+  rm -f $dir_diybot/jbot/diy/user.py
+  fi
   cp -rf $dir_diybot/jbot/* $dir_jbot
   echo -e "bot文件下载成功...\n"
   if [[ ! -f $file_bot ]]; then
