@@ -12,12 +12,12 @@ import requests, os, sys
 async def myupbot(event):
     try:
         msg = await jdbot.send_message(chat_id, "准备更新bot . . .")
-        resp = requests.get('https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/config/diybot.sh').text
+        resp = requests.get('https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/config/bot.sh').text
         if not resp:
             await jdbot.edit_message(msg, "下载shell文件失败\n请稍后重试，或尝试关闭代理重启!")
             return
-        cmdtext = f"bash {_ConfigDir}/diybot.sh"
-        path = f"{_ConfigDir}/diybot.sh"
+        cmdtext = f"bash {_ConfigDir}/bot.sh"
+        path = f"{_ConfigDir}/bot.sh"
         with open(path, 'w+', encoding='utf-8') as f:
             f.write(resp)
         await jdbot.edit_message(msg, "更新不会更新user\n更新过程中程序会重启\n请耐心等待 . . .")
