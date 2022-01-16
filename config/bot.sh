@@ -30,7 +30,6 @@ backup() {
   mkdir $root/repo/backup/$(date +\%m\%d\%H\%M)
   cp -rf $root/jbot/* $root/repo/backup/$(date +\%m\%d\%H\%M)
   rm -rf $root/jbot/*
-  rm -rf $root/repo/diybot
   cd $root
 }
 
