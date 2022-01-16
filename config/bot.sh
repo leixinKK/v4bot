@@ -48,8 +48,10 @@ bot() {
   git_clone ${url} ${dir_diybot} "main"
   if [ -f $dir_jbot/diy/user.py ]; then
     mv -f $dir_jbot/diy/user.py $dir_diybot/jbot/diy/
+    echo "存在user.py, 不更新user.py"
   else
     rm -f $dir_diybot/jbot/diy/user.py
+    echo "不存在user.py，或是首次安装，请安装完bot再单独安装user"
   fi
   if [ -d ${dir_jbot} ]; then
     backup
