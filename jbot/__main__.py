@@ -10,11 +10,14 @@ from .bot.update import version, botlog
 _botuplog = f'{_LogDir}/bot/up.log'
 botpath = f'{_JdbotDir}/bot/'
 diypath = f'{_JdbotDir}/diy/'
+userpath = f'{_JdbotDir}/user/'
+
 logger.info('loading bot module...')
 load_diy('bot', botpath)
 logger.info('loading diy module...')
 load_diy('diy', diypath)
-
+logger.info('loading user module...')
+load_diy('user', userpath)
 
 async def new():
     info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
