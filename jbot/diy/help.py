@@ -28,7 +28,6 @@ export-管理环境变量
 help-获取帮助
 getcookie-扫码获取cookie
 getfile-获取jd目录下文件
-install-扩展此程序功能
 log-选择日志
 list-列出已拓展功能
 node-执行js脚本文件，绝对路径
@@ -39,7 +38,6 @@ setname-设置命令别名
 setshort-设置自定义按钮
 snode-选择脚本后台运行
 start-开始使用本程序
-uninstall-删除拓展功能
 upbot-更新机器人
 ver-版本'''
         elif QL:
@@ -57,7 +55,6 @@ export-V4管理环境变量
 help-获取帮助
 getcookie-扫码获取cookie
 getfile-获取jd目录下文件
-install-扩展此程序功能
 log-选择日志
 list-列出已拓展功能
 node-执行js脚本文件，绝对路径
@@ -68,7 +65,6 @@ setname-设置命令别名
 setshort-设置自定义按钮
 snode-选择脚本后台运行
 start-开始使用本程序
-uninstall-删除拓展功能
 upbot-更新机器人
 ver-版本'''
         await jdbot.edit_message(bot_id, msg_id + 1, msg)
