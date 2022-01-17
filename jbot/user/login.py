@@ -4,13 +4,15 @@ from os.path import exists
 
 from telethon import TelegramClient, events
 
-from .. import api_hash, api_id, proxy, proxystart, bot, jdbot, chat_id, _ConfigDir, proxyType, connectionType
+from .. import api_hash, api_id, proxy, proxystart, _botjson, jdbot, chat_id, _ConfigDir, proxyType, connectionType
 from ..bot.utils import V4, press_event, row, split_list, backfile
 import json, os, re, sys, time, requests
 from asyncio import exceptions
 from telethon import events, Button
 
-BOT = bot
+if os.path.exists(_botjson):
+    with open(_botjson, 'r', encoding='utf-8') as f:
+        BOT = json.load(f)
 
 if BOT.get('proxy_user') and BOT['proxy_user'] != "代理的username,有则填写，无则不用动":
     proxy = {
