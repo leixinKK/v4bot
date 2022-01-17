@@ -61,13 +61,13 @@ else:
     proxy = (bot['proxy_type'], bot['proxy_add'], bot['proxy_port'])
 # 开启tg对话
 if proxystart and 'noretry' in bot.keys() and bot['noretry']:
-    jdbot = TelegramClient('bot', api_id, api_hash, connection=connectionType,
+    jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash, connection=connectionType,
                            proxy=proxy).start(bot_token=TOKEN)
 elif proxystart:
-    jdbot = TelegramClient('bot', api_id, api_hash, connection=connectionType,
+    jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash, connection=connectionType,
                            proxy=proxy, connection_retries=None).start(bot_token=TOKEN)
 elif 'noretry' in bot.keys() and bot['noretry']:
-    jdbot = TelegramClient('bot', api_id, api_hash).start(bot_token=TOKEN)
+    jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash).start(bot_token=TOKEN)
 else:
-    jdbot = TelegramClient('bot', api_id, api_hash,
+    jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash,
                            connection_retries=None).start(bot_token=TOKEN)
