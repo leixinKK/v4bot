@@ -16,8 +16,10 @@ logger.info('loading bot module...')
 load_diy('bot', botpath)
 logger.info('loading diy module...')
 load_diy('diy', diypath)
-logger.info('loading user module...')
-load_diy('user', userpath)
+
+if mybot['开启user'].lower() == 'true':
+    logger.info('loading user module...')
+    load_diy('user', userpath)
 
 async def new():
     info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
