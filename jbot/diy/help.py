@@ -40,8 +40,7 @@ setshort-设置自定义按钮
 snode-选择脚本后台运行
 start-开始使用本程序
 uninstall-删除拓展功能
-up-升级原机器人
-upbot-更新拓展功能
+upbot-更新机器人
 ver-版本'''
         elif QL:
             msg = '''a-自定义快捷按钮
@@ -70,8 +69,7 @@ setshort-设置自定义按钮
 snode-选择脚本后台运行
 start-开始使用本程序
 uninstall-删除拓展功能
-up-升级原机器人
-upbot-更新拓展功能
+upbot-更新机器人
 ver-版本'''
         await jdbot.edit_message(bot_id, msg_id + 1, msg)
     except Exception as e:
