@@ -28,8 +28,8 @@ backup() {
     mkdir $root/repo/backup
   fi
   mkdir $root/repo/backup/$(date +\%m\%d\%H\%M)
-  cp -rf $root/jbot/* $root/repo/backup/$(date +\%m\%d\%H\%M)
-  rm -rf $root/jbot/*
+  cp -rf $root/jbot/* $root/repo/backup/$(date +\%m\%d\%H\%M) 2> /dev/null
+  rm -rf $root/jbot/* 2> /dev/null
   cd $root
 }
 
