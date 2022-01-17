@@ -10,9 +10,9 @@ import re, asyncio, time, datetime, os, sys, requests, json
 bot_id = int(TOKEN.split(":")[0])
 
 if proxystart:
-    client = TelegramClient("user", api_id, api_hash, proxy=proxy, connection_retries=None).start()
+    client = TelegramClient(f"{_ConfigDir}/user", api_id, api_hash, proxy=proxy, connection_retries=None).start()
 else:
-    client = TelegramClient("user", api_id, api_hash, connection_retries=None).start()
+    client = TelegramClient(f"{_ConfigDir}/user", api_id, api_hash, connection_retries=None).start()
 
 
 @client.on(events.NewMessage(chats=[bot_id, my_chat_id], from_users=chat_id, pattern=r"^user(\?|\？)$"))
