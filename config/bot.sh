@@ -68,9 +68,6 @@ bot() {
   if [[ ! -f $file_botset ]]; then
     cp -f $dir_diybot/jbot/set.json $root/config
     mv -f $root/config/set.json $root/config/botset.json
-  else
-    sed -i 's/user": "True"/user": "False"/' $file_botset
-    echo -e "为安全起见，关闭user监控，请使用 /user 手动开启！\n"
   fi
   if [[ ! -f $file_diybotset ]]; then
     cp -f $dir_diybot/config/diybotset.json $root/config
