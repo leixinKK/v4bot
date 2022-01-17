@@ -10,14 +10,11 @@ from .bot.update import version, botlog
 _botuplog = f'{_LogDir}/bot/up.log'
 botpath = f'{_JdbotDir}/bot/'
 diypath = f'{_JdbotDir}/diy/'
-userpath = f'{_JdbotDir}/user/'
-
 logger.info('loading bot module...')
 load_diy('bot', botpath)
 logger.info('loading diy module...')
 load_diy('diy', diypath)
-logger.info('loading user module...')
-load_diy('user', userpath)
+
 
 async def new():
     info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
@@ -66,7 +63,7 @@ async def mysetting():
 
 async def hello():
     if '启动问候' in mybot.keys() and mybot['启动问候'].lower() == 'true':
-        info = '[项目地址](https://github.com/chiupam/JD_Diy) \t| \t[交流频道](https://t.me/JD_Diy_Channel) '
+        info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
         words = mybot["启动问候语"].split("|")
         word = words[random.randint(0, len(words) - 1)]
         await jdbot.send_message(chat_id, f'{str(word)}\n\n\t{info}', link_preview=False)
