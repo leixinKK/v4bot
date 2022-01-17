@@ -1,10 +1,10 @@
 
-import asyncio
+import asyncio, os
 from os.path import exists
 
 from telethon import TelegramClient, events
 
-from .. import api_hash, api_id, proxy, proxystart, jdbot, chat_id, _ConfigDir, BOT, proxyType, connectionType
+from .. import api_hash, api_id, proxy, proxystart, jdbot, chat_id, _ConfigDir, bot, proxyType, connectionType
 from ..bot.utils import V4, press_event, row, split_list, backfile
 import json, os, re, sys, time, requests
 from asyncio import exceptions
@@ -12,26 +12,26 @@ from telethon import events, Button
 
 
 
-if BOT.get('proxy_user') and BOT['proxy_user'] != "代理的username,有则填写，无则不用动":
+if bot.get('proxy_user') and bot['proxy_user'] != "代理的username,有则填写，无则不用动":
     proxy = {
-        'proxy_type': BOT['proxy_type'],
-        'addr':  BOT['proxy_add'],
-        'port': BOT['proxy_port'],
-        'username': BOT['proxy_user'],
-        'password': BOT['proxy_password']}
+        'proxy_type': bot['proxy_type'],
+        'addr':  bot['proxy_add'],
+        'port': bot['proxy_port'],
+        'username': bot['proxy_user'],
+        'password': bot['proxy_password']}
 elif proxyType == "MTProxy":
-    proxy = (BOT['proxy_add'], BOT['proxy_port'], BOT['proxy_secret'])
+    proxy = (bot['proxy_add'], bot['proxy_port'], bot['proxy_secret'])
 else:
-    proxy = (BOT['proxy_type'], BOT['proxy_add'], BOT['proxy_port'])
+    proxy = (bot['proxy_type'], bot['proxy_add'], bot['proxy_port'])
 
 # 开启tg对话
-if proxystart and BOT.get('noretry') and BOT['noretry']:
+if proxystart and bot.get('noretry') and bot['noretry']:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                            proxy=proxy)
 elif proxystart:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                            proxy=proxy, connection_retries=None)
-elif BOT.get('noretry') and BOT['noretry']:
+elif bot.get('noretry') and bot['noretry']:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
 else:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
