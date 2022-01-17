@@ -4,7 +4,7 @@ from os.path import exists
 
 from telethon import TelegramClient, events
 
-from .. import api_hash, api_id, proxy, proxystart, jdbot, chat_id, _ConfigDir, bot, proxyType, connectionType
+from .. import api_hash, api_id, proxy, proxystart, bot, jdbot, chat_id, _ConfigDir, proxyType, connectionType
 from ..bot.utils import V4, press_event, row, split_list, backfile
 import json, os, re, sys, time, requests
 from asyncio import exceptions
