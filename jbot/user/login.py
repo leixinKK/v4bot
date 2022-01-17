@@ -12,7 +12,7 @@ from telethon import events, Button
 
 
 
-if bot.get('proxy_user') and bot['proxy_user'] != "代理的username,有则填写，无则不用动":
+if 'proxy_user' in bot.keys() and bot['proxy_user'] != "代理的username,有则填写，无则不用动":
     proxy = {
         'proxy_type': bot['proxy_type'],
         'addr':  bot['proxy_add'],
@@ -25,13 +25,13 @@ else:
     proxy = (bot['proxy_type'], bot['proxy_add'], bot['proxy_port'])
 
 # 开启tg对话
-if proxystart and bot.get('noretry') and bot['noretry']:
+if proxystart and 'noretry' in bot.keys() and bot['noretry']:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                            proxy=proxy)
 elif proxystart:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                            proxy=proxy, connection_retries=None)
-elif bot.get('noretry') and bot['noretry']:
+elif 'noretry' in bot.keys() and bot['noretry']:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
 else:
     client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
