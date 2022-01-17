@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 if os.path.exists(_botjson):
     with open(_botjson, 'r', encoding='utf-8') as f:
         bot = json.load(f)
-        BOT = json.load(f)
 if os.path.exists(_botset):
     with open(_botset, 'r', encoding='utf-8') as f:
         mybot = json.load(f)
