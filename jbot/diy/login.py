@@ -62,7 +62,7 @@ async def user_login(event):
                 Button.inline("重新登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
                 Button.inline('取消会话', data='cancel')
             ]
-            msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=split_list(buttons, row))
+            msg = await jdbot.edit_message(msg, '首次部署选择重新登录\n请做出你的选择：', buttons=split_list(buttons, row))
             convdata = await conv.wait_event(press_event(sender))
             res = bytes.decode(convdata.data)
             if res == 'cancel':
