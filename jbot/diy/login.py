@@ -20,24 +20,22 @@ elif proxyType == "MTProxy":
 else:
     proxy = (thebot['proxy_type'], thebot['proxy_add'], thebot['proxy_port'])
 
+    
+userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
+
 
 def checkuser():
-    user = False
-    userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
-
-    # 开启tg对话
-    if os.path.exists(userfile):
-        if proxystart and thebot.get('noretry') and thebot['noretry']:
-            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
-                                proxy=proxy)
-        elif proxystart:
-            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
-                                proxy=proxy, connection_retries=None)
-        elif thebot.get('noretry') and thebot['noretry']:
-            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
-        else:
-            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
-                                connection_retries=None)
+    if proxystart and thebot.get('noretry') and thebot['noretry']:
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+                            proxy=proxy)
+    elif proxystart:
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+                            proxy=proxy, connection_retries=None)
+    elif thebot.get('noretry') and thebot['noretry']:
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
+    else:
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
+                            connection_retries=None)
     return user
 
 
@@ -51,8 +49,7 @@ def restart():
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     try:
-        user = checkuser()
-        if not user:
+        if not os.path.exists(userfile)::
             await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n\n```/cmd cd {_JdDir}/jbot/diy && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py```')
             return
         login = False
@@ -74,6 +71,7 @@ async def user_login(event):
                 await jdbot.delete_messages(chat_id, msg)
                 login = True
         if login:
+            user = checkuser()
             await user.connect()
             async with jdbot.conversation(sender, timeout=100) as conv:
                 msg = await conv.send_message('请输入手机号：\n例如：`+8618888888888`\n前面一定带上区号、中国为+86')
