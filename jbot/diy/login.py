@@ -93,4 +93,5 @@ async def user_login(event):
         await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n{details}\n{traceback.format_exc()}\n{tip}")
         logger.error(f"错误--->{str(e)}")
     finally:
+        user = getuser()
         await user.disconnect()
