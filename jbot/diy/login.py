@@ -24,7 +24,7 @@ else:
 userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
 
 
-def checkuser():
+def getuser():
     if proxystart and thebot.get('noretry') and thebot['noretry']:
         user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                             proxy=proxy)
@@ -71,7 +71,7 @@ async def user_login(event):
                 await jdbot.delete_messages(chat_id, msg)
                 login = True
         if login:
-            user = checkuser()
+            user = getuser()
             await user.connect()
             async with jdbot.conversation(sender, timeout=100) as conv:
                 msg = await conv.send_message('请输入手机号：\n例如：`+8618888888888`\n前面一定带上区号、中国为+86')
