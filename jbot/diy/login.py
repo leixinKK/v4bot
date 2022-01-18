@@ -75,6 +75,7 @@ async def user_login(event):
                     else:
                         qrlogin = True
                         break
+            await jdbot.delete_messages(chat_id, msg)
         if tellogin:
             await client.connect()
             async with jdbot.conversation(sender, timeout=100) as conv:
