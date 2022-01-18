@@ -21,22 +21,22 @@ else:
     proxy = (thebot['proxy_type'], thebot['proxy_add'], thebot['proxy_port'])
 
 
-client = False
+user = False
 userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
 
 
 # 开启tg对话
 if os.path.exists(userfile):
     if proxystart and thebot.get('noretry') and thebot['noretry']:
-        client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                             proxy=proxy)
     elif proxystart:
-        client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                             proxy=proxy, connection_retries=None)
     elif thebot.get('noretry') and thebot['noretry']:
-        client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
     else:
-        client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
+        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
                             connection_retries=None)
 
 
@@ -50,7 +50,7 @@ def restart():
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     try:
-        if not client:
+        if not user:
             await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n\n```/cmd cd {_JdDir}/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd {_JdDir} && pm2 restart jbot```')
             return
         login = False
@@ -72,14 +72,14 @@ async def user_login(event):
                 await jdbot.delete_messages(chat_id, msg)
                 login = True
         if login:
-            await client.connect()
+            await user.connect()
             async with jdbot.conversation(sender, timeout=100) as conv:
                 msg = await conv.send_message('请输入手机号：\n例如：`+8618888888888`\n前面一定带上区号、中国为+86')
                 phone = await conv.get_response()
-                await client.send_code_request(phone.raw_text, force_sms=True)
+                await user.send_code_request(phone.raw_text, force_sms=True)
                 msg = await conv.send_message('请输入手机验证码:\n例如：`code12345code`\n两边的**code**必须有！')
                 code = await conv.get_response()
-                await client.sign_in(phone.raw_text, code.raw_text.replace('code', ''))
+                await user.sign_in(phone.raw_text, code.raw_text.replace('code', ''))
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
             restart()
     except asyncio.exceptions.TimeoutError:
@@ -93,4 +93,4 @@ async def user_login(event):
         await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n{details}\n{traceback.format_exc()}\n{tip}")
         logger.error(f"错误--->{str(e)}")
     finally:
-        await client.disconnect()
+        await user.disconnect()
