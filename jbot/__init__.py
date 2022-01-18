@@ -49,7 +49,7 @@ proxystart = bot['proxy']
 StartCMD = bot['StartCMD']
 proxyType = bot['proxy_type']
 connectionType = connection.ConnectionTcpMTProxyRandomizedIntermediate if proxyType == "MTProxy" else connection.ConnectionTcpFull
-if 'proxy_user' in bot.keys() and bot['proxy_user'] != "代理的username,有则填写，无则不用动":
+if bot.get('proxy_user') and bot['proxy_user'] != "代理的username,有则填写，无则不用动":
     proxy = {
         'proxy_type': bot['proxy_type'],
         'addr':  bot['proxy_add'],
@@ -61,14 +61,26 @@ elif proxyType == "MTProxy":
 else:
     proxy = (bot['proxy_type'], bot['proxy_add'], bot['proxy_port'])
 # 开启tg对话
-if proxystart and 'noretry' in bot.keys() and bot['noretry']:
+if proxystart and bot.get('noretry') and bot['noretry']:
     jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash, connection=connectionType,
                            proxy=proxy).start(bot_token=TOKEN)
 elif proxystart:
     jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash, connection=connectionType,
                            proxy=proxy, connection_retries=None).start(bot_token=TOKEN)
-elif 'noretry' in bot.keys() and bot['noretry']:
+elif bot.get('noretry') and bot['noretry']:
     jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash).start(bot_token=TOKEN)
 else:
     jdbot = TelegramClient(f'{_ConfigDir}/bot', api_id, api_hash,
                            connection_retries=None).start(bot_token=TOKEN)
+# 开启client对话
+if proxystart and bot.get('noretry') and bot['noretry']:
+    client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+                        proxy=proxy)
+elif proxystart:
+    client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+                        proxy=proxy, connection_retries=None)
+elif bot.get('noretry') and bot['noretry']:
+    client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
+else:
+    client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
+                        connection_retries=None)
