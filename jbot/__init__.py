@@ -16,6 +16,7 @@ _botjson = f'{_ConfigDir}/bot.json'
 img_file = f'{_ConfigDir}/qr.jpg'
 _botset = f'{_ConfigDir}/botset.json'
 _set = f'{_JdbotDir}/set.json'
+QR_IMG_FILE = f'{_ConfigDir}/qr.jpg'
 
 if not os.path.exists(f'{_LogDir}/bot'):
     os.mkdir(f'{_LogDir}/bot')
