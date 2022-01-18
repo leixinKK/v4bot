@@ -1,11 +1,13 @@
 import asyncio, os
 from os.path import exists
 from telethon import TelegramClient, events
-from .. import api_hash, api_id, proxy, proxystart, thebot, jdbot, chat_id, _ConfigDir, proxyType, connectionType, _JdDir
+from .. import api_hash, api_id, proxy, proxystart, bot, jdbot, chat_id, _ConfigDir, proxyType, connectionType, _JdDir
 from ..bot.utils import V4, press_event, row, split_list, backfile
 import json, os, re, sys, time, requests
 from asyncio import exceptions
 from telethon import events, Button
+
+thebot = bot
 
 if thebot.get('proxy_user') and thebot['proxy_user'] != "代理的username,有则填写，无则不用动":
     proxy = {
@@ -46,41 +48,11 @@ def restart():
     os.system(text)
 
 
-def start():
-    file = "/jd/config/botset.json" if V4 else "/ql/config/botset.json"
-    with open(file, "r", encoding="utf-8") as f1:
-        botset = f1.read()
-    botset = botset.replace('user": "False"', 'user": "True"')
-    with open(file, "w", encoding="utf-8") as f2:
-        f2.write(botset)
-    restart()
-
-
-def close():
-    file = "/jd/config/botset.json" if V4 else "/ql/config/botset.json"
-    with open(file, "r", encoding="utf-8") as f1:
-        botset = f1.read()
-    botset = botset.replace('user": "True"', 'user": "False"')
-    with open(file, "w", encoding="utf-8") as f2:
-        f2.write(botset)
-    restart()
-
-
-def state():
-    file = "/jd/config/botset.json" if V4 else "/ql/config/botset.json"
-    with open(file, "r", encoding="utf-8") as f1:
-        botset = f1.read()
-    if 'user": "True"' in botset:
-        return True
-    else:
-        return False
-
-
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     try:
         if not client:
-            await jdbot.send_message(chat_id, f'user.py不存在\n请先下载user.py, 再执行此命令\n中途勿重启jbot\n```/cmd cd /{_JdDir}/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py```')
+            await jdbot.send_message(chat_id, f'user.py不存在\n请先下载user.py, 再执行此命令\n\n```/cmd cd {_JdDir}/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd {_JdDir} && pm2 restart jbot```')
             return
         login = False
         sender = event.sender_id
@@ -89,7 +61,6 @@ async def user_login(event):
             msg = await conv.send_message("请做出你的选择")
             buttons = [
                 Button.inline("重新登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
-                Button.inline("关闭user", data="close") if state() else Button.inline("开启user", data="start"),
                 Button.inline('取消会话', data='cancel')
             ]
             msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=split_list(buttons, row))
@@ -98,12 +69,6 @@ async def user_login(event):
             if res == 'cancel':
                 await jdbot.edit_message(msg, '对话已取消')
                 return
-            elif res == 'close':
-                await jdbot.edit_message(msg, "关闭成功，准备重启机器人！")
-                close()
-            elif res == 'start':
-                await jdbot.edit_message(msg, "开启成功，请确保session可用，否则请进入容器修改botset.json并删除user.session！\n现准备重启机器人！")
-                start()
             else:
                 if res == 'relogin':
                     backfile(session)
@@ -119,7 +84,7 @@ async def user_login(event):
                 code = await conv.get_response()
                 await client.sign_in(phone.raw_text, code.raw_text)
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
-            start()
+            restart()
     except asyncio.exceptions.TimeoutError:
         await jdbot.edit_message(msg, '登录已超时，对话已停止')
     except Exception as e:
