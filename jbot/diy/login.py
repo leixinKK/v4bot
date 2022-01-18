@@ -51,7 +51,7 @@ def restart():
 async def user_login(event):
     try:
         if not client:
-            await jdbot.send_message(chat_id, f'user.py不存在\n请先下载user.py, 再执行此命令\n\n```/cmd cd {_JdDir}/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd {_JdDir} && pm2 restart jbot```')
+            await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n\n```/cmd cd {_JdDir}/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd {_JdDir} && pm2 restart jbot```')
             return
         login = False
         sender = event.sender_id
