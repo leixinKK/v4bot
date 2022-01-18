@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .. import chat_id, jdbot, logger, api_id, api_hash, proxystart, proxy, _ConfigDir, _ScriptsDir, _JdbotDir, _JdDir, TOKEN
+from .. import chat_id, jdbot, client, logger, api_id, api_hash, proxystart, proxy, _ConfigDir, _ScriptsDir, _JdbotDir, _JdDir, TOKEN
 from ..bot.utils import cmd, backfile, jdcmd, V4, QL, _ConfigFile, myck
 from ..diy.utils import getbean, my_chat_id
 from telethon import events, TelegramClient
 import re, asyncio, time, datetime, os, sys, requests, json
 from .login import getuser
 
-client = getuser()
 bot_id = int(TOKEN.split(":")[0])
 
 @client.on(events.NewMessage(chats=[bot_id, my_chat_id], from_users=chat_id, pattern=r"^user(\?|\？)$"))
