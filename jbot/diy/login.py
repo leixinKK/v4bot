@@ -1,42 +1,14 @@
 import asyncio, os
 from os.path import exists
 from telethon import TelegramClient, events
-from .. import api_hash, api_id, proxy, proxystart, thebot, jdbot, chat_id, _ConfigDir, proxyType, connectionType, _JdDir, logger
-from ..bot.utils import V4, press_event, row, split_list, backfile
+from .. import client, jdbot, chat_id, _JdDir, logger
+from ..bot.utils import V4, press_event, row, split_list
 import json, os, re, sys, time, requests, traceback
 from asyncio import exceptions
 from telethon import events, Button
 
 
-if thebot.get('proxy_user') and thebot['proxy_user'] != "代理的username,有则填写，无则不用动":
-    proxy = {
-        'proxy_type': thebot['proxy_type'],
-        'addr':  thebot['proxy_add'],
-        'port': thebot['proxy_port'],
-        'username': thebot['proxy_user'],
-        'password': thebot['proxy_password']}
-elif proxyType == "MTProxy":
-    proxy = (thebot['proxy_add'], thebot['proxy_port'], thebot['proxy_secret'])
-else:
-    proxy = (thebot['proxy_type'], thebot['proxy_add'], thebot['proxy_port'])
-
-    
 userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
-
-
-def getuser():
-    if proxystart and thebot.get('noretry') and thebot['noretry']:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
-                            proxy=proxy)
-    elif proxystart:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
-                            proxy=proxy, connection_retries=None)
-    elif thebot.get('noretry') and thebot['noretry']:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
-    else:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
-                            connection_retries=None)
-    return user
 
 
 def restart():
@@ -71,15 +43,14 @@ async def user_login(event):
                 await jdbot.delete_messages(chat_id, msg)
                 login = True
         if login:
-            user = getuser()
-            await user.connect()
+            await client.connect()
             async with jdbot.conversation(sender, timeout=100) as conv:
                 msg = await conv.send_message('请输入手机号：\n例如：`+8618888888888`\n前面一定带上区号、中国为+86')
                 phone = await conv.get_response()
-                await user.send_code_request(phone.raw_text, force_sms=True)
+                await client.send_code_request(phone.raw_text, force_sms=True)
                 msg = await conv.send_message('请输入手机验证码:\n例如：`code12345code`\n两边的**code**必须有！')
                 code = await conv.get_response()
-                await user.sign_in(phone.raw_text, code.raw_text.replace('code', ''))
+                await client.sign_in(phone.raw_text, code.raw_text.replace('code', ''))
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
             restart()
     except asyncio.exceptions.TimeoutError:
@@ -93,5 +64,4 @@ async def user_login(event):
         await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n{details}\n{traceback.format_exc()}\n{tip}")
         logger.error(f"错误--->{str(e)}")
     finally:
-        user = getuser()
-        await user.disconnect()
+        await client.disconnect()
