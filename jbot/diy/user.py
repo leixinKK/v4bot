@@ -6,9 +6,9 @@ from ..bot.utils import cmd, backfile, jdcmd, V4, QL, _ConfigFile, myck
 from ..diy.utils import getbean, my_chat_id
 from telethon import events, TelegramClient
 import re, asyncio, time, datetime, os, sys, requests, json
-from .login import user
+from login import checkuser
 
-client = user
+client = checkuser()
 bot_id = int(TOKEN.split(":")[0])
 
 @client.on(events.NewMessage(chats=[bot_id, my_chat_id], from_users=chat_id, pattern=r"^user(\?|\？)$"))
