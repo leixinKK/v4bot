@@ -6,7 +6,7 @@ from ..bot.utils import cmd, backfile, jdcmd, V4, QL, _ConfigFile, myck
 from ..diy.utils import getbean, my_chat_id
 from telethon import events, TelegramClient
 import re, asyncio, time, datetime, os, sys, requests, json
-from login import checkuser
+from .login import checkuser
 
 client = checkuser()
 bot_id = int(TOKEN.split(":")[0])
