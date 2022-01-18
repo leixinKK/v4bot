@@ -21,23 +21,24 @@ else:
     proxy = (thebot['proxy_type'], thebot['proxy_add'], thebot['proxy_port'])
 
 
-user = False
-userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
+def checkuser():
+    user = False
+    userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
 
-
-# 开启tg对话
-if os.path.exists(userfile):
-    if proxystart and thebot.get('noretry') and thebot['noretry']:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
-                            proxy=proxy)
-    elif proxystart:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
-                            proxy=proxy, connection_retries=None)
-    elif thebot.get('noretry') and thebot['noretry']:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
-    else:
-        user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
-                            connection_retries=None)
+    # 开启tg对话
+    if os.path.exists(userfile):
+        if proxystart and thebot.get('noretry') and thebot['noretry']:
+            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+                                proxy=proxy)
+        elif proxystart:
+            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
+                                proxy=proxy, connection_retries=None)
+        elif thebot.get('noretry') and thebot['noretry']:
+            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
+        else:
+            user = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
+                                connection_retries=None)
+    return user
 
 
 def restart():
@@ -50,6 +51,7 @@ def restart():
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     try:
+        user = checkuser()
         if not user:
             await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n\n```/cmd cd {_JdDir}/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd {_JdDir} && pm2 restart jbot```')
             return
@@ -62,7 +64,7 @@ async def user_login(event):
                 Button.inline("重新登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
                 Button.inline('取消会话', data='cancel')
             ]
-            msg = await jdbot.edit_message(msg, '首次部署选择重新登录\n请做出你的选择：', buttons=split_list(buttons, row))
+            msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=split_list(buttons, row))
             convdata = await conv.wait_event(press_event(sender))
             res = bytes.decode(convdata.data)
             if res == 'cancel':
