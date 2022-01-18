@@ -59,7 +59,7 @@ async def user_login(event):
         async with jdbot.conversation(sender, timeout=120) as conv:
             msg = await conv.send_message("请做出你的选择")
             buttons = [
-                Button.inline("开始登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
+                Button.inline("重新登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
                 Button.inline('取消会话', data='cancel')
             ]
             msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=split_list(buttons, row))
@@ -69,8 +69,6 @@ async def user_login(event):
                 await jdbot.edit_message(msg, '对话已取消')
                 return
             else:
-#                 if res == 'relogin':
-#                     backfile(session)
                 await jdbot.delete_messages(chat_id, msg)
                 login = True
         if login:
@@ -79,9 +77,9 @@ async def user_login(event):
                 msg = await conv.send_message('请输入手机号：\n例如：`+8618888888888`\n前面一定带上区号、中国为+86')
                 phone = await conv.get_response()
                 await client.send_code_request(phone.raw_text, force_sms=True)
-                msg = await conv.send_message('请输入手机验证码:\n例如：`12345`\n不要有其他任何字符')
+                msg = await conv.send_message('请输入手机验证码:\n例如：`code12345code`\n两边的**code**必须有！')
                 code = await conv.get_response()
-                await client.sign_in(phone.raw_text, code.raw_text)
+                await client.sign_in(phone.raw_text, code.raw_text.replace('code', ''))
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
             restart()
     except asyncio.exceptions.TimeoutError:
