@@ -49,7 +49,7 @@ def restart():
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     try:
-        if not os.path.exists(userfile)::
+        if not os.path.exists(userfile):
             await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n\n```/cmd cd {_JdDir}/jbot/diy && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py```')
             return
         login = False
