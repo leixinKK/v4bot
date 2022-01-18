@@ -1,9 +1,9 @@
 import asyncio, os
 from os.path import exists
 from telethon import TelegramClient, events
-from .. import api_hash, api_id, proxy, proxystart, thebot, jdbot, chat_id, _ConfigDir, proxyType, connectionType, _JdDir
+from .. import api_hash, api_id, proxy, proxystart, thebot, jdbot, chat_id, _ConfigDir, proxyType, connectionType, _JdDir, logger
 from ..bot.utils import V4, press_event, row, split_list, backfile
-import json, os, re, sys, time, requests
+import json, os, re, sys, time, requests, traceback
 from asyncio import exceptions
 from telethon import events, Button
 
@@ -59,7 +59,7 @@ async def user_login(event):
         async with jdbot.conversation(sender, timeout=120) as conv:
             msg = await conv.send_message("请做出你的选择")
             buttons = [
-                Button.inline("重新登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
+                Button.inline("开始登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
                 Button.inline('取消会话', data='cancel')
             ]
             msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=split_list(buttons, row))
@@ -87,6 +87,12 @@ async def user_login(event):
     except asyncio.exceptions.TimeoutError:
         await jdbot.edit_message(msg, '登录已超时，对话已停止')
     except Exception as e:
-        await jdbot.send_message(chat_id, '登录失败\n 再重新登录\n' + str(e))
+        title = "★错误★"
+        name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
+        function = "函数名：" + e.__traceback__.tb_frame.f_code.co_name
+        details = "错误详情：第 " + str(e.__traceback__.tb_lineno) + " 行"
+        tip = '建议百度/谷歌进行查询'
+        await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n{details}\n{traceback.format_exc()}\n{tip}")
+        logger.error(f"错误--->{str(e)}")
     finally:
         await client.disconnect()
