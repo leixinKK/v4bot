@@ -7,19 +7,19 @@ import json, os, re, sys, time, requests
 from asyncio import exceptions
 from telethon import events, Button
 
-BOT = bot
+thebot = bot
 
-if BOT.get('proxy_user') and BOT['proxy_user'] != "代理的username,有则填写，无则不用动":
+if thebot.get('proxy_user') and thebot['proxy_user'] != "代理的username,有则填写，无则不用动":
     proxy = {
-        'proxy_type': BOT['proxy_type'],
-        'addr':  BOT['proxy_add'],
-        'port': BOT['proxy_port'],
-        'username': BOT['proxy_user'],
-        'password': BOT['proxy_password']}
+        'proxy_type': thebot['proxy_type'],
+        'addr':  thebot['proxy_add'],
+        'port': thebot['proxy_port'],
+        'username': thebot['proxy_user'],
+        'password': thebot['proxy_password']}
 elif proxyType == "MTProxy":
-    proxy = (BOT['proxy_add'], BOT['proxy_port'], BOT['proxy_secret'])
+    proxy = (thebot['proxy_add'], thebot['proxy_port'], thebot['proxy_secret'])
 else:
-    proxy = (BOT['proxy_type'], BOT['proxy_add'], BOT['proxy_port'])
+    proxy = (thebot['proxy_type'], thebot['proxy_add'], thebot['proxy_port'])
 
 
 client = False
@@ -28,13 +28,13 @@ userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
 
 # 开启tg对话
 if os.path.exists(userfile):
-    if proxystart and BOT.get('noretry') and BOT['noretry']:
+    if proxystart and thebot.get('noretry') and thebot['noretry']:
         client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                             proxy=proxy)
     elif proxystart:
         client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash, connection=connectionType,
                             proxy=proxy, connection_retries=None)
-    elif BOT.get('noretry') and BOT['noretry']:
+    elif thebot.get('noretry') and thebot['noretry']:
         client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash)
     else:
         client = TelegramClient(f'{_ConfigDir}/user', api_id, api_hash,
