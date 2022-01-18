@@ -53,7 +53,7 @@ async def user_login(event):
     try:
         user = checkuser()
         if not user:
-            await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n\n```/cmd cd {_JdDir}/jbot/diy && rm -rf user.py && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py && cd {_JdDir} && pm2 restart jbot```')
+            await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n\n```/cmd cd {_JdDir}/jbot/diy && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py```')
             return
         login = False
         sender = event.sender_id
