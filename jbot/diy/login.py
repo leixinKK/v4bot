@@ -69,8 +69,6 @@ async def user_login(event):
                 await jdbot.edit_message(msg, '对话已取消')
                 return
             else:
-                if res == 'relogin':
-                    backfile(session)
                 await jdbot.delete_messages(chat_id, msg)
                 login = True
         if login:
