@@ -4,7 +4,7 @@ from .. import client
 
 
 @client.on(events.NewMessage(pattern=r'^-da$', outgoing=True))
-async def dat(context):
+async def datrue(context):
     input_chat = await context.get_input_chat()
     messages = []
     count = 0
