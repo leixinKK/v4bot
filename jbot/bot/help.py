@@ -59,7 +59,6 @@ help-获取帮助
 getcookie-扫码获取cookie
 getfile-获取jd目录下文件
 log-选择日志
-list-列出已拓展功能
 node-执行js脚本文件，绝对路径
 restart-重启本程序
 repo-仓库管理
