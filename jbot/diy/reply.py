@@ -2,7 +2,7 @@ from telethon import events
 
 from .. import client
 
-@client.on(events.NewMessage(pattern=r'^-re?\s?[0-9]*$', outgoing=True))
+@client.on(events.NewMessage(pattern=r'^-r\s?[0-9]*$', outgoing=True))
 async def reply(event):
     if not event.is_group:
         return
