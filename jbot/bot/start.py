@@ -19,6 +19,7 @@ async def my_start(event):
     /restart 重启本程序。
     /upbot 升级机器人。
     /ver 查看程序版本号。
+    /user 登录启动TG监控。
     /a 使用你的自定义快捷按钮。
     /addcron 增加cron，例：0 0 * * * jtask xxxxx。
     /clearboard 删除快捷输入按钮。
@@ -53,6 +54,7 @@ async def my_start(event):
     /up 升级本程序。
     /upbot 升级拓展功能。
     /ver 查看程序版本号。
+    /user 登录启动TG监控。
     /a 使用你的自定义快捷按钮。
     /clearboard 删除快捷输入按钮。
     /bean 获取京豆变化，默认为总京豆收支。
