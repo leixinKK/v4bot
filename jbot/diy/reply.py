@@ -4,10 +4,8 @@ from .. import client
 
 @client.on(events.NewMessage(pattern=r'^-r\s?[0-9]*$', outgoing=True))
 async def reply(event):
-    if not event.is_group:
-        return
-    num = event.raw_text.split(' ')
-    if isinstance(num, list) and len(num) == 2:
+    num = event.raw_text.replace(' ', '').split('r')
+    if len(num) == 2 and num[-1]:
         num = int(num[-1])
     else:
         num = 1
