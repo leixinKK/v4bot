@@ -8,7 +8,6 @@ from telethon import events, TelegramClient
 import re, asyncio, time, datetime, os, sys, requests, json
 
 bot_id = int(TOKEN.split(":")[0])
-client.start()
 
 @client.on(events.NewMessage(chats=[bot_id, my_chat_id], from_users=chat_id, pattern=r"^user(\?|\？)$"))
 async def user(event):
