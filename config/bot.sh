@@ -54,7 +54,7 @@ bot() {
     echo "存在user.py, 不更新user.py"
   else
     rm -f $dir_diybot/jbot/diy/user.py
-    echo "不存在user.py，或是首次安装，请安装完bot再单独安装user"
+    echo "不存在user.py，或是首次安装，请安装完bot再单独部署user"
   fi
   if [ -d ${dir_jbot} ]; then
     backup
@@ -71,6 +71,9 @@ bot() {
   if [[ ! -f $file_botset ]]; then
     cp -f $dir_diybot/jbot/set.json $root/config
     mv -f $root/config/set.json $root/config/botset.json
+  else
+    sed -i 's/user": "True"/user": "False"/' $file_botset
+    echo -e "默认关闭user监控，请部署user后执行 /user 手动开启！\n"
   fi
   if [[ ! -f $file_diybotset ]]; then
     cp -f $dir_diybot/config/diybotset.json $root/config
