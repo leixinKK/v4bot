@@ -48,4 +48,4 @@ async def resp(event):
             else:
                 await jdbot.send_message(chat_id, '不能获取到对方的id，请使用/reply进行回复')
     except Exception as e:
-        await jdbot.send_message(chat_id, str(e))
+        pass
