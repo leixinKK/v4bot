@@ -1,18 +1,11 @@
 
 import asyncio, os, json, os, re, sys, time, requests, traceback, qrcode
-from telethon import TelegramClient, events
-from .. import client, jdbot, chat_id, _JdDir, logger, QR_IMG_FILE
+from telethon import Button, events
+from .. import client, jdbot, chat_id, _JdDir, logger, QR_IMG_FILE, _botset
 from ..bot.utils import V4, press_event, row, split_list
 from asyncio import exceptions
-from telethon import events, Button
 
 userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
-
-def restart():
-    text = "if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else " \
-           "ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; " \
-           "nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi "
-    os.system(text)
 
 def creat_qr(text):
     """实例化QRCode生成qr对象"""
@@ -26,6 +19,39 @@ def creat_qr(text):
     # 保存二维码
     img.save(QR_IMG_FILE)
 
+def restart():
+    text = "if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else " \
+           "ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; " \
+           "nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi "
+    os.system(text)
+
+
+def start():
+    with open(_botset, 'r', encoding='utf-8') as f:
+        myset = json.load(f)
+    myset['开启user'] = 'True'
+    with open(_botset, "w+", encoding="utf-8") as f:
+        json.dump(myset, f, indent=2, ensure_ascii=False)
+    restart()
+
+
+def close():
+    with open(_botset, 'r', encoding='utf-8') as f:
+        myset = json.load(f)
+    myset['开启user'] = 'False'
+    with open(_botset, "w+", encoding="utf-8") as f:
+        json.dump(myset, f, indent=2, ensure_ascii=False)
+    restart()
+
+
+def state():
+    with open(_botset, 'r', encoding='utf-8') as f:
+        myset = json.load(f)
+    if myset['开启user'].lower() == 'true':
+        return True
+    else:
+        return False
+
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     try:
@@ -34,24 +60,33 @@ async def user_login(event):
             return
         tellogin, qrlogin = False, False
         sender = event.sender_id
-        session = "/jd/config/user.session" if V4 else "/ql/config/user.session"
+        # session = "/jd/config/user.session" if V4 else "/ql/config/user.session"
         async with jdbot.conversation(sender, timeout=120) as conv:
             while True:
                 msg = await conv.send_message("请做出你的选择")
                 buttons = [
-                    Button.inline("重新登录", data="relogin") if os.path.exists(session) else Button.inline("我要登录", data="login"),
-                    Button.inline('取消会话', data='cancel')
+                    Button.inline("重新登录", data="relogin") if client.is_connected() else Button.inline("我要登录", data="login"),
+                    Button.inline('关闭user', data='close') if state() else Button.inline('开启user', data='start')
                 ]
                 opt_btns = [
                     Button.inline('上级目录', data='upper menu'),
                     Button.inline('取消会话', data='cancel')
                 ]
-                msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=split_list(buttons, row))
+                newbuttons = split_list(buttons, row)
+                newbuttons.append([Button.inline('取消会话', data='cancel')])
+                msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=newbuttons)
                 convdata = await conv.wait_event(press_event(sender))
                 res = bytes.decode(convdata.data)
                 if res == 'cancel':
                     await jdbot.edit_message(msg, '对话已取消')
+                    conv.cancel()
                     return
+                elif res == 'close':
+                    await jdbot.edit_message(msg, "关闭成功，准备重启机器人！")
+                    close()
+                elif res == 'start':
+                    await jdbot.edit_message(msg, "开启成功，准备重启机器人！")
+                    start()
                 else:
                     btns = [
                         Button.inline('手机登录', data='tellogin'),
@@ -67,7 +102,7 @@ async def user_login(event):
                         conv.cancel()
                         return
                     elif res2 == 'upper menu':
-                        await jdbot.delete_messages(chat_id, msg)
+                        await msg.delete()
                         continue
                     elif res2 == 'tellogin':
                         tellogin = True
@@ -75,18 +110,44 @@ async def user_login(event):
                     else:
                         qrlogin = True
                         break
-            await jdbot.delete_messages(chat_id, msg)
+            await msg.delete()
         if tellogin:
             await client.connect()
             async with jdbot.conversation(sender, timeout=100) as conv:
-                msg = await conv.send_message('请输入手机号：\n例如：`+8618888888888`\n前面一定带上区号、中国为+86')
-                phone = await conv.get_response()
-                await client.send_code_request(phone.raw_text, force_sms=True)
-                msg = await conv.send_message('请输入手机验证码:\n例如：`code12345code`\n两边的**code**必须有！')
-                code = await conv.get_response()
-                await client.sign_in(phone.raw_text, code.raw_text.replace('code', ''))
+                loop = 3
+                info = ''
+                while loop:
+                    msg = await conv.send_message(f'{info}请输入带区域号手机号：\n例如：+8618888888888')
+                    phone = await conv.get_response()
+                    if re.search('^\+\d+$', phone.raw_text):
+                        await client.send_code_request(phone.raw_text, force_sms=True)
+                        break
+                    else:
+                        await msg.delete()
+                        info = "手机号输入有误\n"
+                        loop -= 1
+                        continue
+                else:
+                    await conv.send_message('输入错误3次，取消登录')
+                    return
+                loop = 3
+                info = ''
+                while loop:
+                    msg = await conv.send_message(f'{info}请输入5位数字验证码：')
+                    code = await conv.get_response()
+                    if re.search('^\d{5}$', code.raw_text):
+                        await client.sign_in(phone.raw_text, code.raw_text)
+                        break
+                    else:
+                        await msg.delete()
+                        info = "验证码输入有误\n"
+                        loop -= 1
+                        continue
+                else:
+                    await conv.send_message('输入错误3次，取消登录')
+                    return
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
-            restart()
+            start()
         elif qrlogin:
             await client.connect()
             qr_login = await client.qr_login()
@@ -95,7 +156,7 @@ async def user_login(event):
             await qr_login.wait(timeout=100)
             await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
             os.remove(QR_IMG_FILE)
-            restart()
+            start()
     except asyncio.exceptions.TimeoutError:
         await jdbot.edit_message(msg, '登录已超时，对话已停止')
     except Exception as e:
