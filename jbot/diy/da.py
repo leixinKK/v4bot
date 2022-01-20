@@ -2,7 +2,6 @@ from telethon import events
 
 from .. import client, chat_id
 
-
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-da$', outgoing=True))
 async def datrue(context):
     input_chat = await context.get_input_chat()
