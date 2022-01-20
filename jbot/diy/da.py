@@ -1,6 +1,6 @@
 from telethon import events
 
-from .. import client
+from .. import client, chat_id
 
 
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-da$', outgoing=True))
