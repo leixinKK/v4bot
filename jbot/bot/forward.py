@@ -38,14 +38,14 @@ if chname:
         chats=chat_id, pattern=mybot['命令别名']['reply']))
 
 
-@jdbot.on(events.NewMessage(incoming=True, chats=chat_id))
-async def resp(event):
-    try:
-        if event.sender.id != chat_id and event.reply_to:
-            reply = await event.get_reply_message()
-            if reply.fwd_from.from_id:
-                await jdbot.send_message(reply.fwd_from.from_id.user_id, event.message.text)
-            else:
-                await jdbot.send_message(chat_id, '不能获取到对方的id，请使用/reply进行回复')
-    except Exception as e:
-        pass
+# @jdbot.on(events.NewMessage(incoming=True, chats=chat_id))
+# async def resp(event):
+#     try:
+#         if event.reply_to:
+#             reply = await event.get_reply_message()
+#             if reply.fwd_from.from_id:
+#                 await jdbot.send_message(reply.fwd_from.from_id.user_id, event.message.text)
+#             else:
+#                 await jdbot.send_message(chat_id, '不能获取到对方的id，请使用/reply进行回复')
+#     except Exception as e:
+#         pass
