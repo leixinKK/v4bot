@@ -41,7 +41,7 @@ if chname:
 @jdbot.on(events.NewMessage(incoming=True, chats=chat_id))
 async def resp(event):
     try:
-        if event.reply_to:
+        if event.sender.id != chat_id and event.reply_to:
             reply = await event.get_reply_message()
             if reply.fwd_from.from_id:
                 await jdbot.send_message(reply.fwd_from.from_id.user_id, event.message.text)
