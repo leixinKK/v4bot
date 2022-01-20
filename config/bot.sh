@@ -46,6 +46,9 @@ bot() {
     rm -rf $dir_diybot
   fi
   git_clone ${url} ${dir_diybot} "main"
+  if [ ! -d $dir_jbot ]; then
+    mkdir $dir_jbot
+  fi
   if [ -f $dir_jbot/diy/user.py ]; then
     mv -f $dir_jbot/diy/user.py $dir_diybot/jbot/diy/
     echo "存在user.py, 不更新user.py"
