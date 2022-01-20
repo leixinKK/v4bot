@@ -5,7 +5,7 @@ from .. import client, jdbot, chat_id, _JdDir, logger, QR_IMG_FILE, _botset
 from ..bot.utils import V4, press_event, row, split_list
 from asyncio import exceptions
 
-userfile = "/jd/jbot/diy/user.py" if V4 else "/ql/jbot/diy/user.py"
+userfile = f"{_JdDir}/jbot/diy/user.py"
 
 def creat_qr(text):
     """实例化QRCode生成qr对象"""
