@@ -13,7 +13,7 @@ bot_id = int(TOKEN.split(":")[0])
 async def user(event):
     try:
         await event.edit(r'**监控已正常启动**')
-        await sleep(5)
+        await asyncio.sleep(5)
         await event.delete()
     except Exception as e:
         title = "★错误★"
