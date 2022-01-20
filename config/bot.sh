@@ -90,10 +90,13 @@ packages() {
 
 start() {
   echo "4、启动bot程序..."
+  if [ ! -d "/ql/log/bot" ]; then
+      mkdir $root/log/bot
+  fi
   if [[ -z $(grep -E "123456789" $file_bot) ]]; then
     if [ -d "/ql" ]; then
         ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
-        nohup python3 -m jbot >$root/log/bot/bot.log 2>&1 &
+        nohup python3 -m jbot > $root/log/bot/bot.log 2>&1 &
         echo -e "bot启动成功...\n"
     else
         cd $dir_jbot
