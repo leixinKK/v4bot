@@ -104,6 +104,7 @@ start() {
     fi
   else
     echo "配置 $file_bot 后再次运行本程序即可启动机器人"
+  fi
 }
 
 main() {
