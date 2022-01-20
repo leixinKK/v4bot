@@ -20,7 +20,7 @@ async def myupbot(event):
         path = f"{_ConfigDir}/bot.sh"
         with open(path, 'w+', encoding='utf-8') as f:
             f.write(resp)
-        await jdbot.edit_message(msg, "更新不会更新user\n更新过程中程序会重启\n请耐心等待 . . .")
+        await jdbot.edit_message(msg, "更新不会更新user\n若已部署user, 更新会暂时关闭监控\n如需开启, 请更新完成后执行 /user\n更新过程中程序会重启\n请耐心等待 . . .")
         os.system(cmdtext)
     except Exception as e:
         title = "★错误★"
