@@ -9,7 +9,7 @@ import re, asyncio, time, datetime, os, sys, requests, json, traceback
 
 bot_id = int(TOKEN.split(":")[0])
 
-@client.on(events.NewMessage(chats=[bot_id, my_chat_id], from_users=chat_id, pattern=r"^-u$"))
+@client.on(events.NewMessage(from_users=chat_id, pattern=r"^-u$"))
 async def user(event):
     try:
         await event.edit(r'**监控已正常启动**')
