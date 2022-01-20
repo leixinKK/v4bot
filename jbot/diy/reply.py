@@ -2,7 +2,7 @@ from telethon import events
 
 from .. import client
 
-@client.on(events.NewMessage(pattern=r'^-r\s?[0-9]*$', outgoing=True))
+@client.on(events.NewMessage(from_users=chat_id, pattern=r'^-r\s?[0-9]*$', outgoing=True))
 async def reply(event):
     num = event.raw_text.replace(' ', '').split('r')
     if len(num) == 2 and num[-1]:
