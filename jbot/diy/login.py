@@ -135,8 +135,10 @@ async def user_login(event):
                 while loop:
                     msg = await conv.send_message(f'{info}请按以下格式输入验证码:\n例如：`code12345code`\n两边的**code**必须有！')
                     code = await conv.get_response()
-                    if re.search('^code\d{5}code$', code.raw_text):
-                        await client.sign_in(phone.raw_text, code.raw_text.replace('code', ''))
+                    check = re.findall('code(\d{5})code', code.raw_text)
+                    if len(check) != 0:
+                        thecode = check[0]
+                        await client.sign_in(phone.raw_text, thecode)
                         break
                     else:
                         await msg.delete()
