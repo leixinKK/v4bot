@@ -89,9 +89,14 @@ packages() {
 }
 
 start() {
-  echo "4、启动bot程序..."
-  if [ ! -d "/ql/log/bot" ]; then
-      mkdir $root/log/bot
+  echo "4、启动bot程序..." 
+  dir_log=$root/log/bot
+  echo "检测 $dir_log 目录"
+  if [ ! -d $dir_log ]
+    then echo "  └—结果：不存在，新建"
+    mkdir $dir_log
+  else
+    echo "  └—结果：存在，跳过"
   fi
   if [[ -z $(grep -E "123456789" $file_bot) ]]; then
     if [ -d "/ql" ]; then
