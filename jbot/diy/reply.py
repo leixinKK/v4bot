@@ -1,6 +1,6 @@
 from telethon import events
 
-from .. import client
+from .. import client, chat_id
 
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-r\s?[0-9]*$', outgoing=True))
 async def reply(event):
