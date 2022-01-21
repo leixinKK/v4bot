@@ -77,7 +77,7 @@ async def user_login(event):
                 newbuttons.append([Button.inline('取消会话', data='cancel')])
                 text = "请做出你的选择："
                 if not state():
-                    text = "首次部署请先登录、再开启user\n请做出你的选择："
+                    text = "**若首次部署、切勿开启user**\n请做出你的选择："
                 msg = await jdbot.edit_message(msg, f'{text}', buttons=newbuttons)
                 convdata = await conv.wait_event(press_event(sender))
                 res = bytes.decode(convdata.data)
