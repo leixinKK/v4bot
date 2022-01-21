@@ -69,6 +69,8 @@ async def user_login(event):
                     Button.inline("重新登录", data="relogin") if isconnected else Button.inline("我要登录", data="login"),
                     Button.inline('关闭user', data='close') if state() else Button.inline('开启user', data='start')
                 ]
+                if not state() and not isconnected:
+                    buttons.remove(Button.inline('开启user', data='start')
                 opt_btns = [
                     Button.inline('上级目录', data='upper menu'),
                     Button.inline('取消会话', data='cancel')
