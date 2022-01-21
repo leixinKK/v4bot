@@ -142,17 +142,10 @@ async def user_login(event):
                 loop = 3
                 info = ''
                 while loop:
-                    msg = await conv.send_message(f'{info}请按以下格式输入验证码:\n例如：`code12345code`\n**两边的code必须有！**\n\n回复 `cancel` 或 `取消` 即可取消登录')
+                    msg = await conv.send_message(f'{info}请按以下格式输入验证码:\n例如：`code12345code`\n**两边的code必须有！**')
                     code = await conv.get_response()
                     check = re.findall('code(\d{5})code', code.raw_text)
-                    if code.raw_text == 'cancel' or code.raw_text == '取消':
-                        await msg.delete()
-                        await conv.send_message('已取消登录\n已关闭user\n如需开启 请重启后重新执行 /user\n开始重启 . . .')
-                        close()
-                        await client.disconnect()
-                        restart()
-                        return
-                    elif len(check) != 0:
+                    if len(check) != 0:
                         thecode = check[0]
                         await client.sign_in(phone.raw_text, thecode)
                         break
