@@ -16,7 +16,7 @@ module.exports = {
             "jbot/requirements.txt",
             "jbot/ecosystem.config.js"
         ],
-        watch_delay: 15000,
+        watch_delay: 3000,
         interpreter: ""
     }]
 }
