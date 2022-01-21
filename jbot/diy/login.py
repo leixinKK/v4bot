@@ -150,6 +150,7 @@ async def user_login(event):
                         await conv.send_message('取消登录')
                         if not isconnected:
                             await client.disconnect()
+                        close()
                         return
                     elif len(check) != 0:
                         thecode = check[0]
@@ -179,8 +180,8 @@ async def user_login(event):
     except asyncio.exceptions.TimeoutError:
         await jdbot.edit_message(msg, '登录已超时，对话已停止')
     except Exception as e:
-        if not isconnected:
-            await client.disconnect()
+        close()
+        await client.disconnect()
         title = "★错误★"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + e.__traceback__.tb_frame.f_code.co_name
