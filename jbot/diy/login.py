@@ -54,6 +54,7 @@ def state():
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
+    isconnected = True if client.is_connected() else False
     try:
         if not os.path.exists(userfile):
             await jdbot.send_message(chat_id, f'user.py不存在\n请先执行以下命令\n再执行：/user\n\n```/cmd cd {_JdDir}/jbot/diy && wget https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/jbot/diy/user.py```')
@@ -65,7 +66,7 @@ async def user_login(event):
             while True:
                 msg = await conv.send_message("请做出你的选择")
                 buttons = [
-                    Button.inline("重新登录", data="relogin") if client.is_connected() else Button.inline("我要登录", data="login"),
+                    Button.inline("重新登录", data="relogin") if isconnected else Button.inline("我要登录", data="login"),
                     Button.inline('关闭user', data='close') if state() else Button.inline('开启user', data='start')
                 ]
                 opt_btns = [
@@ -122,7 +123,8 @@ async def user_login(event):
                     if phone.raw_text == 'cancel' or phone.raw_text == '取消':
                         await msg.delete()
                         await conv.send_message('取消登录')
-                        await client.disconnect()
+                        if not isconnected:
+                            await client.disconnect()
                         return
                     elif re.search('^\+\d+$', phone.raw_text):
                         await client.send_code_request(phone.raw_text, force_sms=True)
@@ -134,7 +136,8 @@ async def user_login(event):
                         continue
                 else:
                     await conv.send_message('输入错误3次，取消登录')
-                    await client.disconnect()
+                    if not isconnected:
+                        await client.disconnect()
                     return
                 loop = 3
                 info = ''
@@ -145,7 +148,8 @@ async def user_login(event):
                     if code.raw_text == 'cancel' or code.raw_text == '取消':
                         await msg.delete()
                         await conv.send_message('取消登录')
-                        await client.disconnect()
+                        if not isconnected:
+                            await client.disconnect()
                         return
                     elif len(check) != 0:
                         thecode = check[0]
@@ -158,7 +162,8 @@ async def user_login(event):
                         continue
                 else:
                     await conv.send_message('输入错误3次，取消登录')
-                    await client.disconnect()
+                    if not isconnected:
+                        await client.disconnect()
                     return
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
             start()
@@ -174,7 +179,8 @@ async def user_login(event):
     except asyncio.exceptions.TimeoutError:
         await jdbot.edit_message(msg, '登录已超时，对话已停止')
     except Exception as e:
-        await client.disconnect()
+        if not isconnected:
+            await client.disconnect()
         title = "★错误★"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + e.__traceback__.tb_frame.f_code.co_name
