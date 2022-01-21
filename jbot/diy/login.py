@@ -80,7 +80,7 @@ async def user_login(event):
                 if res == 'cancel':
                     await jdbot.edit_message(msg, '对话已取消')
                     conv.cancel()
-                    return
+                    return False
                 elif res == 'close':
                     await jdbot.edit_message(msg, "关闭成功，准备重启机器人！")
                     close()
@@ -100,7 +100,7 @@ async def user_login(event):
                     if res2 == 'cancel':
                         await jdbot.edit_message(msg, '对话已取消')
                         conv.cancel()
-                        return
+                        return False
                     elif res2 == 'upper menu':
                         await msg.delete()
                         continue
@@ -117,9 +117,14 @@ async def user_login(event):
                 loop = 3
                 info = ''
                 while loop:
-                    msg = await conv.send_message(f'{info}请输入带区域号手机号：\n例如：+8618888888888')
+                    msg = await conv.send_message(f'{info}请输入带区域号手机号：\n例如：+8618888888888\n\n回复 `cancel` 或 `取消` 即可取消登录')
                     phone = await conv.get_response()
-                    if re.search('^\+\d+$', phone.raw_text):
+                    if phone.raw_text == 'cancel' or phone.raw_text == '取消':
+                        await msg.delete()
+                        await conv.send_message('取消登录')
+                        await client.disconnect()
+                        return
+                    elif re.search('^\+\d+$', phone.raw_text):
                         await client.send_code_request(phone.raw_text, force_sms=True)
                         break
                     else:
@@ -129,14 +134,20 @@ async def user_login(event):
                         continue
                 else:
                     await conv.send_message('输入错误3次，取消登录')
+                    await client.disconnect()
                     return
                 loop = 3
                 info = ''
                 while loop:
-                    msg = await conv.send_message(f'{info}请按以下格式输入验证码:\n例如：`code12345code`\n两边的**code**必须有！')
+                    msg = await conv.send_message(f'{info}请按以下格式输入验证码:\n例如：`code12345code`\n**两边的code必须有！**\n\n回复 `cancel` 或 `取消` 即可取消登录')
                     code = await conv.get_response()
                     check = re.findall('code(\d{5})code', code.raw_text)
-                    if len(check) != 0:
+                    if code.raw_text == 'cancel' or code.raw_text == '取消':
+                        await msg.delete()
+                        await conv.send_message('取消登录')
+                        await client.disconnect()
+                        return
+                    elif len(check) != 0:
                         thecode = check[0]
                         await client.sign_in(phone.raw_text, thecode)
                         break
@@ -147,6 +158,7 @@ async def user_login(event):
                         continue
                 else:
                     await conv.send_message('输入错误3次，取消登录')
+                    await client.disconnect()
                     return
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
             start()
@@ -162,6 +174,7 @@ async def user_login(event):
     except asyncio.exceptions.TimeoutError:
         await jdbot.edit_message(msg, '登录已超时，对话已停止')
     except Exception as e:
+        await client.disconnect()
         title = "★错误★"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + e.__traceback__.tb_frame.f_code.co_name
@@ -169,5 +182,3 @@ async def user_login(event):
         tip = '建议百度/谷歌进行查询'
         await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n{details}\n{traceback.format_exc()}\n{tip}")
         logger.error(f"错误--->{str(e)}")
-    finally:
-        await client.disconnect()
