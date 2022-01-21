@@ -67,15 +67,13 @@ async def user_login(event):
                 msg = await conv.send_message("请做出你的选择")
                 buttons = [
                     Button.inline("重新登录", data="relogin") if isconnected else Button.inline("我要登录", data="login"),
-                    Button.inline('关闭user', data='close') if state() else Button.inline('开启user', data='start')
+                    Button.inline('关闭user', data='close') if state() else if not isconnected Button.inline('开启user', data='start')
                 ]
                 opt_btns = [
                     Button.inline('上级目录', data='upper menu'),
                     Button.inline('取消会话', data='cancel')
                 ]
                 newbuttons = split_list(buttons, row)
-                if not state() and not isconnected:
-                    newbuttons.remove(Button.inline('开启user', data='start')
                 newbuttons.append([Button.inline('取消会话', data='cancel')])
                 msg = await jdbot.edit_message(msg, '请做出你的选择：', buttons=newbuttons)
                 convdata = await conv.wait_event(press_event(sender))
