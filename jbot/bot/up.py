@@ -12,7 +12,7 @@ import requests, os, sys
 async def myupbot(event):
     try:
         msg = await jdbot.send_message(chat_id, "准备更新bot . . .")
-        resp = requests.get('https://ghproxy.com/https://raw.githubusercontent.com/Annyoo2021/mybot/main/config/bot.sh').text
+        resp = requests.get('https://raw.githubusercontent.com/Annyoo2021/mybot/main/config/bot.sh').text
         if not resp:
             await jdbot.edit_message(msg, "下载shell文件失败\n请稍后重试，或尝试关闭代理重启!")
             return
