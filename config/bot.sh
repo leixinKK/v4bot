@@ -109,8 +109,8 @@ start() {
     else
         cd $dir_jbot
         pm2 start ecosystem.config.js
-        cd $root
-        pm2 restart jbot
+        # cd $root
+        # pm2 restart jbot
         echo -e "bot启动成功...\n"
     fi
   else
