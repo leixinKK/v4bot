@@ -11,7 +11,7 @@ dir_diybot=$root/repo/diybot
 file_bot=$root/config/bot.json
 file_botset=$root/config/botset.json
 file_diybotset=$root/config/diybotset.json
-url="https://ghproxy.com/https://github.com/Annyoo2021/mybot.git"
+url="https://github.com/Annyoo2021/mybot.git"
 
 git_clone() {
     local url=$1
