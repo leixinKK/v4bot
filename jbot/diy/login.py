@@ -147,10 +147,10 @@ async def user_login(event):
                     check = re.findall('code(\d{5})code', code.raw_text)
                     if code.raw_text == 'cancel' or code.raw_text == '取消':
                         await msg.delete()
-                        await conv.send_message('取消登录')
-                        if not isconnected:
-                            await client.disconnect()
+                        await conv.send_message('已取消登录\n已关闭user\n如需开启 请重启后重新执行 /user\n开始重启 . . .')
                         close()
+                        await client.disconnect()
+                        restart()
                         return
                     elif len(check) != 0:
                         thecode = check[0]
@@ -162,9 +162,10 @@ async def user_login(event):
                         loop -= 1
                         continue
                 else:
-                    await conv.send_message('输入错误3次，取消登录')
-                    if not isconnected:
-                        await client.disconnect()
+                    await conv.send_message('输入错误3次，取消登录\n已关闭user\n如需开启 请重启后重新执行 /user\n开始重启 . . .')
+                    close()
+                    await client.disconnect()
+                    restart()
                     return
                 await jdbot.send_message(chat_id, '恭喜您已登录成功！\n自动重启中！')
             start()
