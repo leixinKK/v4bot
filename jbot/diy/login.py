@@ -52,6 +52,33 @@ def state():
     else:
         return False
 
+
+def startrx():
+    with open(_botset, 'r', encoding='utf-8') as f:
+        myset = json.load(f)
+    myset['开启人形'] = 'True'
+    with open(_botset, "w+", encoding="utf-8") as f:
+        json.dump(myset, f, indent=2, ensure_ascii=False)
+    restart()
+
+
+def closerx():
+    with open(_botset, 'r', encoding='utf-8') as f:
+        myset = json.load(f)
+    myset['开启人形'] = 'False'
+    with open(_botset, "w+", encoding="utf-8") as f:
+        json.dump(myset, f, indent=2, ensure_ascii=False)
+    restart()
+
+
+def checkrx():
+    with open(_botset, 'r', encoding='utf-8') as f:
+        myset = json.load(f)
+    if myset['开启人形'].lower() == 'true':
+        return True
+    else:
+        return False
+
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     isconnected = True if client.is_connected() else False
@@ -67,7 +94,8 @@ async def user_login(event):
                 msg = await conv.send_message("请做出你的选择")
                 buttons = [
                     Button.inline("重新登录", data="relogin") if isconnected else Button.inline("我要登录", data="login"),
-                    Button.inline('关闭user', data='close') if state() else Button.inline('开启user', data='start')
+                    Button.inline('关闭user', data='close') if state() else Button.inline('开启user', data='start'),
+                    Button.inline('关闭人形', data='closerx') if checkrx() else Button.inline('开启人形', data='startrx')
                 ]
                 opt_btns = [
                     Button.inline('上级目录', data='upper menu'),
@@ -86,11 +114,17 @@ async def user_login(event):
                     conv.cancel()
                     return False
                 elif res == 'close':
-                    await jdbot.edit_message(msg, "关闭成功，准备重启机器人！")
+                    await jdbot.edit_message(msg, "user关闭成功，准备重启机器人 . . .")
                     close()
                 elif res == 'start':
-                    await jdbot.edit_message(msg, "开启成功，准备重启机器人！")
+                    await jdbot.edit_message(msg, "user开启成功，准备重启机器人 . . .")
                     start()
+                elif res == 'closerx':
+                    await jdbot.edit_message(msg, "人形关闭成功，准备重启机器人 . . .")
+                    closerx()
+                elif res == 'startrx':
+                    await jdbot.edit_message(msg, "人形开启成功，准备重启机器人 . . .")
+                    startrx()
                 else:
                     btns = [
                         Button.inline('手机登录', data='tellogin'),
