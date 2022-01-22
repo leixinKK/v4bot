@@ -12,9 +12,12 @@ bot_id = int(TOKEN.split(":")[0])
 @client.on(events.NewMessage(from_users=chat_id, pattern=r"^-u$"))
 async def user(event):
     try:
-        await event.edit(r'**监控已正常启动**')
-        await asyncio.sleep(5)
+        chat = await event.get_chat()
         await event.delete()
+        # await asyncio.sleep(0.2)
+        msg = await client.send_message(chat.id, "**容器② 监控正常**")
+        await asyncio.sleep(5)
+        await client.delete_messages(chat.id, msg)
     except Exception as e:
         title = "★错误★"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
