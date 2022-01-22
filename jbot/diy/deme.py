@@ -1,6 +1,6 @@
 
 from telethon import events
-from .. import client, chat_id, jdbot, logger
+from .. import client, chat_id, jdbot, logger, mybot
 import os, asyncio, traceback
 
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-d\s?[0-9]*$', outgoing=True))
