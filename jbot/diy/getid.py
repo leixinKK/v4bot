@@ -5,7 +5,7 @@ import os, asyncio, traceback
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-i$', outgoing=True))
 async def check_id(event):
     try:
-        if not event.is_group or not event.is_reply or mybot['开启人形'].lower() == 'False':
+        if not event.is_group or not event.is_reply or mybot['开启人形'].lower() == 'false':
             return
         message = await event.get_reply_message()
         text = f"此消息ID：`{str(event.message.id)}`\n\n"
@@ -49,7 +49,7 @@ async def check_id(event):
 @client.on(events.NewMessage(pattern=r'^-i$', outgoing=True))
 async def get_id(event):
     try:
-        if event.is_reply or mybot['开启人形'].lower() == 'False':
+        if event.is_reply or mybot['开启人形'].lower() == 'false':
             return
         chat = await event.get_chat()
         title = chat.title if event.is_group or event.is_channel else ""
