@@ -6,7 +6,7 @@ import os, asyncio, traceback
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-d\s?[0-9]*$', outgoing=True))
 async def del_msg(event):
     try:
-        if mybot['开启人形'].lower() == 'False':
+        if mybot['开启人形'].lower() == 'false':
             return
         num = event.raw_text.replace(' ', '').split('d')
         if len(num) == 2 and num[-1]:
