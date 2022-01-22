@@ -1,9 +1,11 @@
 from telethon import events
 
-from .. import client, chat_id
+from .. import client, chat_id, mybot
 
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-dat$', outgoing=True))
 async def datrue(context):
+    if mybot['开启人形'].lower() == 'False':
+        return
     input_chat = await context.get_input_chat()
     messages = []
     count = 0
