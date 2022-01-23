@@ -10,7 +10,7 @@ async def datrue(context):
         input_chat = await context.get_input_chat()
         messages = []
         count = 0
-        await event.delete()
+        await context.delete()
         async for message in context.client.iter_messages(input_chat, min_id=1):
             messages.append(message)
             count += 1
