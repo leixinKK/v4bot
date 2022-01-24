@@ -1,6 +1,5 @@
-
 from telethon import events
-from .. import client, chat_id, jdbot, logger, mybot
+from .. import client, chat_id, jdbot, logger, mybot, _JdDir
 import os, asyncio, traceback
 
 @client.on(events.NewMessage(from_users=chat_id, pattern=r'^-d\s?[0-9]*$', outgoing=True))
@@ -15,9 +14,36 @@ async def del_msg(event):
             count = 1
         await event.delete()
         count_buffer = 0
-        async for message in client.iter_messages(event.chat_id, from_user="me"):
+        dme_msg = "别搁这防撤回了 . . ."
+        target_file = False
+        if os.path.exists(f'{_JdDir}/jbot/diy/dme.jpg'):
+            target_file = await event.client.upload_file(f'{_JdDir}/jbot/diy/dme.jpg')
+        async for message in event.client.iter_messages(event.chat_id, from_user="me"):
             if count_buffer == count:
                 break
+            if message.forward or message.via_bot or message.sticker or message.contact or message.poll or message.game or message.geo:
+                pass
+            elif message.text or message.voice:
+                if not message.text == dme_msg:
+                    try:
+                        await message.edit(dme_msg)
+                    except:
+                        pass
+            elif message.document or message.photo or message.file or message.audio or message.video or message.gif:
+                if target_file:
+                    if not message.text == dme_msg:
+                        try:
+                            await message.edit(dme_msg, file=target_file)
+                        except:
+                            pass
+                else:
+                    if not message.text == dme_msg:
+                        try:
+                            await message.edit(dme_msg)
+                        except:
+                            pass
+            else:
+                pass
             await message.delete()
             count_buffer += 1
         notification = await client.send_message(event.chat_id, f'已删除{count_buffer}/{count}')
