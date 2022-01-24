@@ -2,7 +2,7 @@ from telethon import events
 from .. import client, chat_id, mybot, jdbot, logger
 import os, asyncio, traceback
 
-@client.on(events.NewMessage(from_users=chat_id, pattern=r'^-dat$', outgoing=True))
+@client.on(events.NewMessage(pattern=r'^-dat$', outgoing=True))
 async def datrue(context):
     try:
         if mybot['开启人形'].lower() == 'false':
