@@ -2,7 +2,7 @@ from telethon import events
 from .. import client, chat_id, mybot, jdbot, logger
 import os, asyncio, traceback
 
-@client.on(events.NewMessage(from_users=chat_id, pattern=r'^-r\s?[0-9]*$', outgoing=True))
+@client.on(events.NewMessage(pattern=r'^-r\s?[0-9]*$', outgoing=True))
 async def reply(event):
     try:
         if not event.is_reply or mybot['开启人形'].lower() == 'false':
