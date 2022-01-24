@@ -5,11 +5,11 @@ import os, asyncio, traceback
 @client.on(events.NewMessage(pattern=r'^-i$', outgoing=True))
 async def check_id(event):
     try:
-        if not event.is_reply or mybot['开启人形'].lower() == 'false':
+        if event.is_private or not event.is_reply or mybot['开启人形'].lower() == 'false':
             return
         message = await event.get_reply_message()
         text = f"此消息ID：`{str(event.message.id)}`\n\n"
-        text += f"**群组信息**\nid：`{str(event.chat_id)}\n`"
+        text += f"**群组信息**\nid：`{str(event.chat_id)}\n`" if event.is_group else f"**频道信息**\nid：`{str(event.chat_id)}\n`"
         msg_from = event.chat if event.chat else (await event.get_chat())
         title = f"群组名称：`{msg_from.title}`\n" if event.is_group else f"频道名称：`{msg_from.title}`\n"
         text += title
