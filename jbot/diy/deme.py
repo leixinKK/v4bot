@@ -12,7 +12,7 @@ async def del_msg(event):
         if len(num) == 2 and num[-1]:
             count = int(num[-1])
         else:
-            count = 10
+            count = 1
         await event.delete()
         count_buffer = 0
         async for message in client.iter_messages(event.chat_id, from_user="me"):
