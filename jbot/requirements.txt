@@ -7,3 +7,4 @@ async_timeout==3.0.1
 prettytable>=2.1.0
 natsort==8.0.0
 redis==4.0.2
+httpx==0.21.3
