@@ -11,19 +11,19 @@ async def my_chart(event):
     msg_text = event.raw_text.split(' ')
     try:
         msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
-        if isinstance(msg_text,list) and len(msg_text) == 2:
+        if isinstance(msg_text, list) and len(msg_text) == 2:
             text = msg_text[-1]
         else:
             text = None
         logger.info(f'命令参数值为：{text}')
         if text and int(text):
-            beanin, beanout, beanstotal, date = get_bean_data(int(text))
-            if not beanout:
-                msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(beanin)}')
+            res = get_bean_data(int(text))
+            if res['code'] != 200:
+                msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(res["data"])}')
             else:
-                creat_chart(date, f'账号{str(text)}',
-                            beanin, beanout, beanstotal[1:])
-                await jdbot.delete_messages(chat_id,msg)
+                creat_chart(res['data'][3], f'账号{str(text)}',
+                            res['data'][0], res['data'][1], res['data'][2][1:])
+                await jdbot.delete_messages(chat_id, msg)
                 msg = await jdbot.send_message(chat_id, f'您的账号{text}收支情况', file=_botimg)
         else:
             msg = await jdbot.edit_message(msg, '请正确使用命令\n/chart n n为第n个账号')
