@@ -65,8 +65,8 @@ async def getbeans(ck, client):
         beansout = {key: 0 for key in _7days}
         while _7day:
             page = page + 1
-            resp = await client.get(url, params=getparams(page),
-                               headers=headers, timeout=100).text
+            resp = await client.get(url, params=getparams(page), headers=headers, timeout=100)
+            resp = resp.text
             res = json.loads(resp)
             if res['resultCode'] == 0:
                 for i in res['data']['list']:
@@ -104,7 +104,8 @@ async def getTotal(ck, client):
             "Cookie": ck,
         }
         jurl = "https://wxapp.m.jd.com/kwxhome/myJd/home.json"
-        resp = await client.get(jurl, headers=headers, timeout=100).text
+        resp = await client.get(jurl, headers=headers, timeout=100)
+        resp = resp.text
         res = json.loads(resp)
         logger.info(f'从京东获取京豆总量{res["user"]["jingBean"]}')
         return res['user']['jingBean']
