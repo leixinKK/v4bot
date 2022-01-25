@@ -17,7 +17,7 @@ async def my_chart(event):
             text = None
         logger.info(f'命令参数值为：{text}')
         if text and int(text):
-            res = get_bean_data(int(text))
+            res = await get_bean_data(int(text))
             if res['code'] != 200:
                 msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(res["data"])}')
             else:
