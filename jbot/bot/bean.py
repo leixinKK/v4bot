@@ -20,7 +20,7 @@ async def my_bean(event):
     msg_text = event.raw_text.split(' ')
     try:
         msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
-        if isinstance(msg_text,list) and len(msg_text) == 2:
+        if isinstance(msg_text, list) and len(msg_text) == 2:
             text = msg_text[-1]
         else:
             text = None
@@ -40,13 +40,13 @@ async def my_bean(event):
         elif not V4 and (text == 'in' or text == 'out' or text == None):
             await jdbot.edit_message(msg, 'QL暂不支持使用bean in、out \n请使用/bean n n为数字')
         elif text and int(text):
-            beanin, beanout, beanstotal, date = get_bean_data(int(text))
-            logger.info(f'获取到的数据为：{beanin}-{beanout}-{beanstotal}-{date}')
-            if not beanout:
+            res = get_bean_data(int(text))
+            if res['code'] != 200:
                 await jdbot.delete_messages(chat_id, msg)
-                await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(beanin)}')
+                await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(res["data"])}')
             else:
-                creat_bean_count(date, beanin, beanout, beanstotal[1:])
+                creat_bean_count(res['data'][3], res['data']
+                                 [0], res['data'][1], res['data'][2][1:])
                 await jdbot.delete_messages(chat_id, msg)
                 await jdbot.send_message(chat_id, f'您的账号{text}收支情况', file=_botimg)
         elif not text:
@@ -101,7 +101,7 @@ def creat_bean_counts(csv_file):
         elif len(row) < len(title):
             i = len(title) - len(row)
             for _ in range(0, i):
-                row.append(0)
+                row.append(str(0))
         tb.add_row(row)
     length = 172 + 100 * num
     im = Image.new("RGB", (length, 400), (244, 244, 244))
