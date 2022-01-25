@@ -4,14 +4,14 @@ import time
 import json
 from datetime import timedelta
 from datetime import timezone
-from .utils import _ConfigFile, myck,logger
+from .utils import _ConfigFile, myck, logger
 SHA_TZ = timezone(
     timedelta(hours=8),
     name='Asia/Shanghai',
 )
-
+requests.adapters.DEFAULT_RETRIES = 5
 session = requests.session()
-
+session.keep_alive = False
 
 url = "https://api.m.jd.com/api"
 
@@ -26,9 +26,9 @@ def getbody(page):
     return body
 
 
-def getparms(page):
+def getparams(page):
     body = getbody(page)
-    parms = {
+    params = {
         "functionId": "jposTradeQuery",
         "appid": "swat_miniprogram",
         "client": "tjj_m",
@@ -38,7 +38,7 @@ def getparms(page):
         "timestamp": int(round(time.time() * 1000)),
         "body": json.dumps(body)
     }
-    return parms
+    return params
 
 
 def getbeans(ck):
@@ -64,8 +64,8 @@ def getbeans(ck):
         beansout = {key: 0 for key in _7days}
         while _7day:
             page = page + 1
-            resp = session.get(url, params=getparms(page),
-                               headers=headers,timeout=100).text
+            resp = session.get(url, params=getparams(page),
+                               headers=headers, timeout=100).text
             res = json.loads(resp)
             if res['resultCode'] == 0:
                 for i in res['data']['list']:
@@ -82,48 +82,55 @@ def getbeans(ck):
                         _7day = False
             else:
                 logger.info(f'未能从京东获取到京豆数据，发生了错误{str(res)}')
-                return f'error  {str(res)}', None, None
+                return {'code': 400, 'data': res}
         logger.info(f'获取到京豆数据')
-        return beansin, beansout, _7days
+        return {'code': 200, 'data': [beansin, beansout, _7days]}
     except Exception as e:
         logger.info(f'未能从京东获取到京豆数据，发生了错误{str(e)}')
-        return f'error  {str(e)}'
+        return {'code': 400, 'data': str(e)}
 
 
 def getTotal(ck):
-    logger.info('即将从京东获取京豆总量')
-    headers = {
-        "Host": "wxapp.m.jd.com",
-        "Connection": "keep-alive",
-        "charset": "utf-8",
-        "User-Agent": "Mozilla/5.0 (Linux; Android 10; MI 9 Build/QKQ1.190825.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2797 MMWEBSDK/201201 Mobile Safari/537.36 MMWEBID/7986 MicroMessenger/8.0.1840(0x2800003B) Process/appbrand4 WeChat/arm64 Weixin NetType/4G Language/zh_CN ABI/arm64 MiniProgramEnv/android",
-        "Content-Type": "application/x-www-form-urlencoded;",
-        "Accept-Encoding": "gzip, compress, deflate, br",
-        "Cookie": ck,
-    }
-    jurl = "https://wxapp.m.jd.com/kwxhome/myJd/home.json"
-    resp = session.get(jurl, headers=headers,timeout=100).text
-    res = json.loads(resp)
-    logger.info(f'从京东获取京豆总量{res["user"]["jingBean"]}')
-    return res['user']['jingBean']
+    try:
+        logger.info('即将从京东获取京豆总量')
+        headers = {
+            "Host": "wxapp.m.jd.com",
+            "Connection": "keep-alive",
+            "charset": "utf-8",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 10; MI 9 Build/QKQ1.190825.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2797 MMWEBSDK/201201 Mobile Safari/537.36 MMWEBID/7986 MicroMessenger/8.0.1840(0x2800003B) Process/appbrand4 WeChat/arm64 Weixin NetType/4G Language/zh_CN ABI/arm64 MiniProgramEnv/android",
+            "Content-Type": "application/x-www-form-urlencoded;",
+            "Accept-Encoding": "gzip, compress, deflate, br",
+            "Cookie": ck,
+        }
+        jurl = "https://wxapp.m.jd.com/kwxhome/myJd/home.json"
+        resp = session.get(jurl, headers=headers, timeout=100).text
+        res = json.loads(resp)
+        logger.info(f'从京东获取京豆总量{res["user"]["jingBean"]}')
+        return res['user']['jingBean']
+    except Exception as e:
+        logger.error(str(e))
 
 
 def get_bean_data(i):
-    logger.info('开始执行京豆收支')
-    cookies = myck(_ConfigFile)
-    logger.info(f'共获取到{len(cookies)},将获取第{i}个账户京豆数据')
-    ck = cookies[i-1]
-    beansin, beansout, _7days = getbeans(ck)
-    beantotal = getTotal(ck)
-    if not beansout:
-        return str(beansin), None, None, None
-    else:
-        beanin, beanout = [], []
-        beanstotal = [int(beantotal), ]
-        for i in beansin:
-            beantotal = int(beantotal) - int(beansin[i]) - int(beansout[i])
-            beanin.append(beansin[i])
-            beanout.append(int(str(beansout[i]).replace('-', '')))
-            beanstotal.append(beantotal)
-        logger.info(f'获取到如下数据：\n日期：{_7days[::-1]}\n收入：{beanin[::-1]}\n支出：{beanout[::-1]}\n总量：{beanstotal[::-1]}')
-        return beanin[::-1], beanout[::-1], beanstotal[::-1], _7days[::-1]
+    try:
+        logger.info('开始执行京豆收支')
+        cookies = myck(_ConfigFile)
+        if cookies:
+            logger.info(f'共获取到{len(cookies)},将获取第{i}个账户京豆数据')
+            ck = cookies[i-1]
+            beans_res = getbeans(ck)
+            beantotal = getTotal(ck)
+            if beans_res['code'] != 200:
+                return beans_res
+            else:
+                beansin, beansout = [], []
+                beanstotal = [int(beantotal), ]
+                for i in beans_res['data'][0]:
+                    beantotal = int(
+                        beantotal) - int(beans_res['data'][0][i]) - int(beans_res['data'][1][i])
+                    beansin.append(int(beans_res['data'][0][i]))
+                    beansout.append(int(str(beans_res['data'][1][i]).replace('-', '')))
+                    beanstotal.append(beantotal)
+            return {'code': 200, 'data': [beansin[::-1], beansout[::-1], beanstotal[::-1], beans_res['data'][2][::-1]]}
+    except Exception as e:
+        logger.error(str(e))
