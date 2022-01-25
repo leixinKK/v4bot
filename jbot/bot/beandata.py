@@ -41,7 +41,7 @@ def getparams(page):
     return params
 
 
-def getbeans(ck):
+async def getbeans(ck, client):
     logger.info('即将从京东获取京豆数据')
     try:
         _7day = True
@@ -64,7 +64,7 @@ def getbeans(ck):
         beansout = {key: 0 for key in _7days}
         while _7day:
             page = page + 1
-            resp = session.get(url, params=getparams(page),
+            resp = await client.get(url, params=getparams(page),
                                headers=headers, timeout=100).text
             res = json.loads(resp)
             if res['resultCode'] == 0:
@@ -90,7 +90,7 @@ def getbeans(ck):
         return {'code': 400, 'data': str(e)}
 
 
-def getTotal(ck):
+async def getTotal(ck, client):
     try:
         logger.info('即将从京东获取京豆总量')
         headers = {
@@ -103,7 +103,7 @@ def getTotal(ck):
             "Cookie": ck,
         }
         jurl = "https://wxapp.m.jd.com/kwxhome/myJd/home.json"
-        resp = session.get(jurl, headers=headers, timeout=100).text
+        resp = await client.get(jurl, headers=headers, timeout=100).text
         res = json.loads(resp)
         logger.info(f'从京东获取京豆总量{res["user"]["jingBean"]}')
         return res['user']['jingBean']
@@ -111,26 +111,27 @@ def getTotal(ck):
         logger.error(str(e))
 
 
-def get_bean_data(i):
+async def get_bean_data(i):
     try:
-        logger.info('开始执行京豆收支')
-        cookies = myck(_ConfigFile)
-        if cookies:
-            logger.info(f'共获取到{len(cookies)},将获取第{i}个账户京豆数据')
-            ck = cookies[i-1]
-            beans_res = getbeans(ck)
-            beantotal = getTotal(ck)
-            if beans_res['code'] != 200:
-                return beans_res
-            else:
-                beansin, beansout = [], []
-                beanstotal = [int(beantotal), ]
-                for i in beans_res['data'][0]:
-                    beantotal = int(
-                        beantotal) - int(beans_res['data'][0][i]) - int(beans_res['data'][1][i])
-                    beansin.append(int(beans_res['data'][0][i]))
-                    beansout.append(int(str(beans_res['data'][1][i]).replace('-', '')))
-                    beanstotal.append(beantotal)
-            return {'code': 200, 'data': [beansin[::-1], beansout[::-1], beanstotal[::-1], beans_res['data'][2][::-1]]}
+        async with httpx.AsyncClient(verify=False) as client:
+            logger.info('开始执行京豆收支')
+            cookies = myck(_ConfigFile)
+            if cookies:
+                logger.info(f'共获取到{len(cookies)},将获取第{i}个账户京豆数据')
+                ck = cookies[i-1]
+                beans_res = await getbeans(ck, client)
+                beantotal = await getTotal(ck, client)
+                if beans_res['code'] != 200:
+                    return beans_res
+                else:
+                    beansin, beansout = [], []
+                    beanstotal = [int(beantotal), ]
+                    for i in beans_res['data'][0]:
+                        beantotal = int(
+                            beantotal) - int(beans_res['data'][0][i]) - int(beans_res['data'][1][i])
+                        beansin.append(int(beans_res['data'][0][i]))
+                        beansout.append(int(str(beans_res['data'][1][i]).replace('-', '')))
+                        beanstotal.append(beantotal)
+                return {'code': 200, 'data': [beansin[::-1], beansout[::-1], beanstotal[::-1], beans_res['data'][2][::-1]]}
     except Exception as e:
         logger.error(str(e))
