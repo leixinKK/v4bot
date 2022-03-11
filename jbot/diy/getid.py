@@ -55,7 +55,7 @@ async def get_id(event):
         title = chat.title if event.is_group or event.is_channel else ""
         if event.is_group:
             await event.edit(f'**群组名：**`{title}`\n**群组ID：**`-100{chat.id}`')
-        if event.is_channel:
+        elif event.is_channel:
             await event.edit(f'**频道名：**`{title}`\n**频道ID：**`-100{chat.id}`')
         elif event.is_private:
             await event.edit(f'**姓：**`{chat.last_name}`\n**名：**`{chat.first_name}`\n**用户id：**`{str(chat.id)}`\n**用户名：**@{chat.username}')
