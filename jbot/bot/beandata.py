@@ -69,18 +69,21 @@ async def getbeans(ck, client):
             resp = resp.text
             res = json.loads(resp)
             if res['resultCode'] == 0:
-                for i in res['data']['list']:
-                    for date in _7days:
-                        if str(date) in i['createDate'] and i['amount'] > 0:
-                            beansin[str(date)] = beansin[str(
-                                date)] + i['amount']
-                            break
-                        elif str(date) in i['createDate'] and i['amount'] < 0:
-                            beansout[str(date)] = beansout[str(
-                                date)] + i['amount']
-                            break
-                    if i['createDate'].split(' ')[0] not in str(_7days):
-                        _7day = False
+                if (len(res['data']['list'])) != 0:
+                    for i in res['data']['list']:
+                        for date in _7days:
+                            if str(date) in i['createDate'] and i['amount'] > 0:
+                                beansin[str(date)] = beansin[str(
+                                    date)] + i['amount']
+                                break
+                            elif str(date) in i['createDate'] and i['amount'] < 0:
+                                beansout[str(date)] = beansout[str(
+                                    date)] + i['amount']
+                                break
+                        if i['createDate'].split(' ')[0] not in str(_7days):
+                            _7day = False
+                else:
+                    _7day = False
             else:
                 logger.info(f'未能从京东获取到京豆数据，发生了错误{str(res)}')
                 return {'code': 400, 'data': res}
