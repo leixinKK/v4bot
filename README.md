@@ -17,6 +17,6 @@ cd config && rm -rf bot.sh && wget https://raw.githubusercontent.com/Annyoo2021/
 #### 4、安装user，执行 /user 命令，按提示操作。
 
 
-#### 5、集成了人形的 复读、查ID、删除消息、删除所有消息 4个功能，命令依次为：-r -i -d -dat ，执行 /user 可选择开启或关闭此功能。
+#### 5、集成了人形的 复读、查ID、删除消息、删除所有消息、偷贴纸、贴纸转图片 5个功能，命令依次为：-r -i -d -dat -s -pic ，执行 /user 可选择开启或关闭此功能。
 
 
