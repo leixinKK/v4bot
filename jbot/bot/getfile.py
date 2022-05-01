@@ -1,9 +1,10 @@
 from telethon import events, Button
 from asyncio import exceptions
-from .. import jdbot, chat_id, _ScriptsDir, _ConfigDir, logger
+from .. import jdbot, chat_id, _ScriptsDir, _ConfigDir, _JdbotDir, logger
 from .utils import press_event, backfile, _DiyDir, jdcmd, V4, cronup, cmd
 
-_BotDiyDir = '/jd/jbot/diy'
+_BotDiyDir = f'{_JdbotDir}/diy'
+_BotBOTDir = f'{_JdbotDir}/bot'
 
 @jdbot.on(events.NewMessage(from_users=chat_id))
 async def my_file(event):
@@ -18,8 +19,8 @@ async def my_file(event):
             Button.inline('放入jbot/diy目录', data=_BotDiyDir)],[
             Button.inline('取消', data='cancel')]
         ]
-        btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir)], [
-            Button.inline('放入scripts并运行', data='node1'), Button.inline('取消', data='cancel')]]
+        btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), Button.inline('放入scripts并运行', data='node1')], 
+        [Button.inline('放入jbot/bot目录', data=_BotBOTDir), Button.inline('放入jbot/diy目录', data=_BotDiyDir), Button.inline('取消', data='cancel')]]
         SENDER = event.sender_id
         if event.message.file:
             markup = []
