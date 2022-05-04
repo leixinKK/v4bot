@@ -3,6 +3,7 @@ import datetime
 import time
 import json
 import httpx
+import random
 from datetime import timedelta
 from datetime import timezone
 from .utils import _ConfigFile, myck, logger
@@ -15,6 +16,23 @@ session = requests.session()
 session.keep_alive = False
 
 url = "https://api.m.jd.com/api"
+
+
+async def getUA():
+    """
+    随机生成一个UA
+    jdapp;iPhone;10.0.4;14.2;9fb54498b32e17dfc5717744b5eaecda8366223c;network/wifi;ADID/2CF597D0-10D8-4DF8-C5A2-61FD79AC8035;model/iPhone11,1;addressid/7785283669;appBuild/167707;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/null;supportJDSHWK/1
+    :return: ua
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.15(0x18000f29) NetType/WIFI Language/zh_CN'
+
+    """
+    uuid = ''.join(random.sample('123456789abcdef123456789abcdef123456789abcdef123456789abcdef', 40))
+    addressid = ''.join(random.sample('1234567898647', 10))
+    iosVer = ''.join(random.sample(["14.5.1", "14.4", "14.3", "14.2", "14.1", "14.0.1", "13.7", "13.1.2", "13.1.1"], 1))
+    iosV = iosVer.replace('.', '_')
+    iPhone = ''.join(random.sample(["8", "9", "10", "11", "12", "13"], 1))
+    ADID = ''.join(random.sample('0987654321ABCDEF', 8)) + '-' + ''.join(random.sample('0987654321ABCDEF', 4)) + '-' + ''.join(random.sample('0987654321ABCDEF', 4)) + '-' + ''.join(random.sample('0987654321ABCDEF', 4)) + '-' + ''.join(random.sample('0987654321ABCDEF', 12))
+    return f'jdapp;iPhone;10.0.4;{iosVer};{uuid};network/wifi;ADID/{ADID};model/iPhone{iPhone},1;addressid/{addressid};appBuild/167707;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS {iosV} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/null;supportJDSHWK/1'
 
 
 def getbody(page):
@@ -42,7 +60,7 @@ def getparams(page):
     return params
 
 
-async def getbeans(ck, client):
+async def getbeans(ck, UA, client):
     logger.info('即将从京东获取京豆数据')
     try:
         _7day = True
@@ -51,7 +69,7 @@ async def getbeans(ck, client):
             "Host": "api.m.jd.com",
             "Connection": "keep-alive",
             "charset": "utf-8",
-            "User-Agent": "Mozilla/5.0 (Linux; Android 10; MI 9 Build/QKQ1.190825.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2797 MMWEBSDK/201201 Mobile Safari/537.36 MMWEBID/7986 MicroMessenger/8.0.1840(0x2800003B) Process/appbrand4 WeChat/arm64 Weixin NetType/4G Language/zh_CN ABI/arm64 MiniProgramEnv/android",
+            "User-Agent": UA,
             "Content-Type": "application/x-www-form-urlencoded;",
             "Accept-Encoding": "gzip, compress, deflate, br",
             "Cookie": ck,
@@ -94,14 +112,14 @@ async def getbeans(ck, client):
         return {'code': 400, 'data': str(e)}
 
 
-async def getTotal(ck, client):
+async def getTotal(ck, UA, client):
     try:
         logger.info('即将从京东获取京豆总量')
         headers = {
             "Host": "wxapp.m.jd.com",
             "Connection": "keep-alive",
             "charset": "utf-8",
-            "User-Agent": "Mozilla/5.0 (Linux; Android 10; MI 9 Build/QKQ1.190825.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2797 MMWEBSDK/201201 Mobile Safari/537.36 MMWEBID/7986 MicroMessenger/8.0.1840(0x2800003B) Process/appbrand4 WeChat/arm64 Weixin NetType/4G Language/zh_CN ABI/arm64 MiniProgramEnv/android",
+            "User-Agent": UA,
             "Content-Type": "application/x-www-form-urlencoded;",
             "Accept-Encoding": "gzip, compress, deflate, br",
             "Cookie": ck,
@@ -124,8 +142,9 @@ async def get_bean_data(i):
             if cookies:
                 logger.info(f'共获取到{len(cookies)},将获取第{i}个账户京豆数据')
                 ck = cookies[i-1]
-                beans_res = await getbeans(ck, client)
-                beantotal = await getTotal(ck, client)
+                theUA = await getUA()
+                beans_res = await getbeans(ck, theUA, client)
+                beantotal = await getTotal(ck, theUA, client)
                 if beans_res['code'] != 200:
                     return beans_res
                 else:
