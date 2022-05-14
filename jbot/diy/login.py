@@ -79,6 +79,17 @@ def checkrx():
     else:
         return False
 
+def delSession():
+    session = "/jd/config/user.session" if V4 else "/ql/config/user.session"
+    os.remove(session)
+    with open(_botset, 'r', encoding='utf-8') as f:
+        myset = json.load(f)
+    myset['开启user'] = 'False'
+    with open(_botset, "w+", encoding="utf-8") as f:
+        json.dump(myset, f, indent=2, ensure_ascii=False)
+    restart()
+
+
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/user$'))
 async def user_login(event):
     isconnected = True if client.is_connected() else False
@@ -125,6 +136,28 @@ async def user_login(event):
                 elif res == 'startrx':
                     await jdbot.edit_message(msg, "人形开启成功，准备重启机器人 . . .")
                     startrx()
+                elif res == 'relogin':
+                    btns = [
+                        Button.inline('删除user.session', data='delSession')
+                    ]
+                    newbtns = split_list(btns, row)
+                    newbtns.append(opt_btns)
+                    msg = await jdbot.edit_message(msg, '**重新登录需要提前删除授权文件**\n请做出你的选择：', buttons=newbtns)
+                    convdata = await conv.wait_event(press_event(sender))
+                    res1 = bytes.decode(convdata.data)
+                    if res1 == 'cancel':
+                        await jdbot.edit_message(msg, '对话已取消')
+                        conv.cancel()
+                        return False
+                    elif res1 == 'upper menu':
+                        await msg.delete()
+                        continue
+                    elif res1 == 'delSession':
+                        await jdbot.edit_message(msg, "准备删除user.session\n准备重启机器人\n\n**重启后选择「我要登录」**\n**登录成功前「切勿开启user」**")
+                        delSession()
+                        break
+                    else:
+                        break
                 else:
                     btns = [
                         Button.inline('手机登录', data='tellogin'),
